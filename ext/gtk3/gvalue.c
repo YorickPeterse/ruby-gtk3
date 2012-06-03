@@ -10,6 +10,10 @@ static ID gtk3_id_to_s;
 /**
  * Converts a Ruby value to a GValue.
  *
+ * TODO: currently the amount of types this function can handle is rather
+ * limited. Based on whether or not it's needed this function should be capable
+ * of handling more types (e.g. hashes).
+ *
  * @since 2012-06-03
  * @param [VALUE] rbvalue The Ruby value to convert.
  * @param [GValue] gvalue A GValue object to store the converted value in.
