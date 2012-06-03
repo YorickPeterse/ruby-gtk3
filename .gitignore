@@ -1,0 +1,5 @@
+*.o
+*.so
+*.log
+ext/gtk3/Makefile
+tmp/

@@ -1,0 +1,9 @@
+./lib/gtk3/**/*.rb ./lib/gtk3.rb
+-m markdown
+-M redcarpet
+-o ./doc
+-r ./README.md
+--private
+--protected
+-
+LICENSE

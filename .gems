@@ -1,0 +1,7 @@
+# Runtime Dependencies
+
+# Development Dependencies
+bacon
+rake
+redcarpet
+yard
