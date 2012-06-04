@@ -1,11 +1,10 @@
 require 'rubygems/package_task'
 require 'rake/extensiontask'
 
-tasks   = ['build']
 GEMSPEC = Gem::Specification.load('gtk3.gemspec')
 
-tasks.each do |task|
-  import(File.expand_path("../task/#{task}.rake", __FILE__))
+Dir['./task/*.rake'].each do |task|
+  import(task)
 end
 
 Rake::ExtensionTask.new('gtk3', GEMSPEC)
