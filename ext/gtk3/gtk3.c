@@ -95,7 +95,6 @@ void Init_gtk3()
         0
     );
 
-    Init_gtk3_gvalue();
     Init_gtk3_closure();
     Init_gtk3_type();
     Init_gtk3_widget();
