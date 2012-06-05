@@ -43,6 +43,32 @@ describe 'Gtk3::Widget' do
     id.should > 0
   end
 
+  it 'Map and unmap a widget' do
+    window = Gtk3::Window.new
+
+    window.show
+
+    window.mapped?.should == true
+    window.unmap
+    window.mapped?.should == false
+    window.map
+    window.mapped?.should == true
+
+    window.destroy
+  end
+
+  it 'Realize and unrealize a widget' do
+    window = Gtk3::Window.new
+
+    window.realized?.should == false
+    window.realize
+    window.realized?.should == true
+    window.unrealize
+    window.realized?.should == false
+
+    window.destroy
+  end
+
   it 'Show a widget' do
     window = Gtk3::Window.new
 
@@ -51,6 +77,8 @@ describe 'Gtk3::Widget' do
     window.show
 
     window.visible?.should == true
+
+    window.destroy
   end
 
   it 'Show a widget along with all child widgets' do
@@ -62,9 +90,22 @@ describe 'Gtk3::Widget' do
     window.show_all
 
     window.visible?.should == true
+
+    window.destroy
   end
 
-  it 'Remove a widget from its parent' do
+  it 'Show an unmapped widget and start the main loop' do
+    window = Gtk3::Window.new
 
+    window.unmap
+
+    window.mapped?.should == false
+
+    window.show_now
+
+    window.visible?.should == true
+    window.mapped?.should  == true
+
+    window.destroy
   end
 end

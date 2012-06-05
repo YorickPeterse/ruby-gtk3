@@ -38,6 +38,7 @@ VALUE gtk3_cWidget;
 /**
  * Binds the specified block to the given event name.
  *
+ * @todo Add support for signal callbacks that expect multiple arguments.
  * @example
  *  window = Gtk3::Window.new
  *
@@ -173,6 +174,26 @@ static VALUE gtk3_widget_connect(int argc, VALUE *argv, VALUE self)
 }
 
 /**
+ * Destroys a widget and frees the associated memory.
+ *
+ * @example
+ *  window = Gtk3::Window.new
+ *  window.destroy
+ *
+ * @since 2012-05-31
+ */
+static VALUE gtk3_widget_destroy(VALUE self)
+{
+    GtkWidget *widget;
+
+    Data_Get_Struct(self, GtkWidget, widget);
+
+    gtk_widget_destroy(widget);
+
+    return Qnil;
+}
+
+/**
  * Returns `true` if the widget is being destroyed. If this is not the case
  * `false` is returned instead.
  *
@@ -208,77 +229,17 @@ static VALUE gtk3_widget_in_destruction(VALUE self)
 }
 
 /**
- * Destroys a widget and frees the associated memory.
- *
- * @example
- *  window = Gtk3::Window.new
- *  window.destroy
- *
- * @since 2012-05-31
- */
-static VALUE gtk3_widget_destroy(VALUE self)
-{
-    GtkWidget *widget;
-
-    Data_Get_Struct(self, GtkWidget, widget);
-
-    gtk_widget_destroy(widget);
-
-    return Qnil;
-}
-
-/**
- * Shows the widget along with all child widgets.
- *
- * @example
- *  window = Gtk3::Window.new
- *  window.show_all
- *
- * @since 2012-05-31
- */
-static VALUE gtk3_widget_show_all(VALUE self)
-{
-    GtkWidget *widget;
-
-    Data_Get_Struct(self, GtkWidget, widget);
-
-    gtk_widget_show_all(widget);
-
-    return Qnil;
-}
-
-/**
- * Only shows the current widget, ignoring child widgets.
- *
- * @example
- *  window = Gtk3::Window.new
- *  window.show
+ * Hides the widget.
  *
  * @since 2012-06-04
  */
-static VALUE gtk3_widget_show(VALUE self)
+static VALUE gtk3_widget_hide(VALUE self)
 {
     GtkWidget *widget;
 
     Data_Get_Struct(self, GtkWidget, widget);
 
-    gtk_widget_show(widget);
-
-    return Qnil;
-}
-
-/**
- * Dissociates a widget from its parent container.
- *
- * @since 2012-06-04
- */
-static VALUE gtk3_widget_unparent(VALUE self)
-{
-    GtkWidget *widget;
-
-    Data_Get_Struct(self, GtkWidget, widget);
-
-    gtk_widget_unparent(widget);
+    gtk_widget_hide(widget);
 
     return Qnil;
 }
@@ -306,6 +267,276 @@ static VALUE gtk3_widget_get_visible(VALUE self)
 }
 
 /**
+ * Maps a widget if it hasn't already been mapped.
+ *
+ * @since 2012-06-04
+ */
+static VALUE gtk3_widget_map(VALUE self)
+{
+    GtkWidget *widget;
+
+    Data_Get_Struct(self, GtkWidget, widget);
+
+    gtk_widget_map(widget);
+
+    return Qnil;
+}
+
+/**
+ * Unmaps a widget if it's mapped.
+ *
+ * @since 2012-06-04
+ */
+static VALUE gtk3_widget_unmap(VALUE self)
+{
+    GtkWidget *widget;
+
+    Data_Get_Struct(self, GtkWidget, widget);
+
+    gtk_widget_unmap(widget);
+
+    return Qnil;
+}
+
+/**
+ * Returns `true` if the widget is mapped, `false` otherwise.
+ *
+ * @since 2012-06-05
+ */
+static VALUE gtk3_widget_get_mapped(VALUE self)
+{
+    GtkWidget *widget;
+
+    Data_Get_Struct(self, GtkWidget, widget);
+
+    if ( gtk_widget_get_mapped(widget) == TRUE )
+    {
+        return Qtrue;
+    }
+    else
+    {
+        return Qfalse;
+    }
+}
+
+/**
+ * Creates the GDK resources associated with a widget.
+ *
+ * @since 2012-06-05
+ */
+static VALUE gtk3_widget_realize(VALUE self)
+{
+    GtkWidget *widget;
+
+    Data_Get_Struct(self, GtkWidget, widget);
+
+    gtk_widget_realize(widget);
+
+    return Qnil;
+}
+
+/**
+ * Unrealizes a widget and frees the associated resources.
+ *
+ * @since 2012-06-05
+ */
+static VALUE gtk3_widget_unrealize(VALUE self)
+{
+    GtkWidget *widget;
+
+    Data_Get_Struct(self, GtkWidget, widget);
+
+    gtk_widget_unrealize(widget);
+
+    return Qnil;
+}
+
+/**
+ * Returns `true` if the widget is realized, `false` otherwise.
+ *
+ * @since  2012-06-05
+ * @return [TrueClass|FalseClass]
+ */
+static VALUE gtk3_widget_get_realized(VALUE self)
+{
+    GtkWidget *widget;
+
+    Data_Get_Struct(self, GtkWidget, widget);
+
+    if ( gtk_widget_get_realized(widget) == TRUE )
+    {
+        return Qtrue;
+    }
+    else
+    {
+        return Qfalse;
+    }
+}
+
+/**
+ * Shows the widget along with all child widgets.
+ *
+ * @example
+ *  window = Gtk3::Window.new
+ *  window.show_all
+ *
+ * @since 2012-05-31
+ */
+static VALUE gtk3_widget_show_all(VALUE self)
+{
+    GtkWidget *widget;
+
+    Data_Get_Struct(self, GtkWidget, widget);
+
+    gtk_widget_show_all(widget);
+
+    return Qnil;
+}
+
+/**
+ * Shows the current widget. If the widget is an unmapped toplevel widget then
+ * this method will start the main GTK loop and wait for the widget to be
+ * mapped.
+ *
+ * @since 2012-05-31
+ */
+static VALUE gtk3_widget_show_now(VALUE self)
+{
+    GtkWidget *widget;
+
+    Data_Get_Struct(self, GtkWidget, widget);
+
+    gtk_widget_show_now(widget);
+
+    return Qnil;
+}
+
+/**
+ * Only shows the current widget, ignoring child widgets.
+ *
+ * @example
+ *  window = Gtk3::Window.new
+ *  window.show
+ *
+ * @since 2012-06-04
+ */
+static VALUE gtk3_widget_show(VALUE self)
+{
+    GtkWidget *widget;
+
+    Data_Get_Struct(self, GtkWidget, widget);
+
+    gtk_widget_show(widget);
+
+    return Qnil;
+}
+
+/**
+ * Returns the allocated width of the widget.
+ *
+ * @todo   Test this method.
+ * @since  2012-06-05
+ * @return [Fixnum]
+ */
+static VALUE gtk3_widget_get_allocated_width(VALUE self)
+{
+    GtkWidget *widget;
+
+    Data_Get_Struct(self, GtkWidget, widget);
+
+    return INT2FIX(gtk_widget_get_allocated_width(widget));
+}
+
+/**
+ * Returns the allocated height of the widget.
+ *
+ * @todo   Test this method.
+ * @since  2012-06-05
+ * @return [Fixnum]
+ */
+static VALUE gtk3_widget_get_allocated_height(VALUE self)
+{
+    GtkWidget *widget;
+
+    Data_Get_Struct(self, GtkWidget, widget);
+
+    return INT2FIX(gtk_widget_get_allocated_height(widget));
+}
+
+/**
+ * Draws the entire area of a widget.
+ *
+ * @todo  Test this method.
+ * @since 2012-06-05
+ */
+static VALUE gtk3_widget_queue_draw(VALUE self)
+{
+    GtkWidget *widget;
+
+    Data_Get_Struct(self, GtkWidget, widget);
+
+    gtk_widget_queue_draw(widget);
+
+    return Qnil;
+}
+
+/**
+ * Draws a widget region based on the specified coordinates, height and widget.
+ *
+ * @todo  Test this method.
+ * @since 2012-06-05
+ * @param [Fixnum] x The X coordinate of the upper left corner.
+ * @param [Fixnum] y The Y coordinate of the upper left corner.
+ * @param [Fixnum] width The width of the region to draw.
+ * @param [Fixnum] height The height of the region to draw.
+ */
+static VALUE gtk3_widget_queue_draw_area(
+    VALUE self,
+    VALUE x,
+    VALUE y,
+    VALUE width,
+    VALUE height
+)
+{
+    GtkWidget *widget;
+
+    /* TODO: Maybe support Bignum as well? */
+    Check_Type(x, T_FIXNUM);
+    Check_Type(y, T_FIXNUM);
+    Check_Type(width, T_FIXNUM);
+    Check_Type(height, T_FIXNUM);
+
+    Data_Get_Struct(self, GtkWidget, widget);
+
+    gtk_widget_queue_draw_area(
+        widget,
+        FIX2INT(x),
+        FIX2INT(y),
+        FIX2INT(width),
+        FIX2INT(height)
+    );
+
+    return Qnil;
+}
+
+/**
+ * Dissociates a widget from its parent container.
+ *
+ * @todo  Test this method.
+ * @since 2012-06-04
+ */
+static VALUE gtk3_widget_unparent(VALUE self)
+{
+    GtkWidget *widget;
+
+    Data_Get_Struct(self, GtkWidget, widget);
+
+    gtk_widget_unparent(widget);
+
+    return Qnil;
+}
+
+/**
  * Sets up the {Gtk3::Widget} class.
  *
  * @since 2012-05-30
@@ -315,6 +546,7 @@ void Init_gtk3_widget()
     gtk3_cWidget = rb_define_class_under(gtk3_mGtk3, "Widget", rb_cObject);
 
     rb_define_method(gtk3_cWidget, "connect", gtk3_widget_connect, -1);
+
     rb_define_method(gtk3_cWidget, "destroy", gtk3_widget_destroy, 0);
 
     rb_define_method(
@@ -324,10 +556,45 @@ void Init_gtk3_widget()
         0
     );
 
+    rb_define_method(gtk3_cWidget, "hide", gtk3_widget_hide, 0);
+    rb_define_method(gtk3_cWidget, "visible?", gtk3_widget_get_visible, 0);
+
+    rb_define_method(gtk3_cWidget, "map", gtk3_widget_map, 0);
+    rb_define_method(gtk3_cWidget, "unmap", gtk3_widget_unmap, 0);
+    rb_define_method(gtk3_cWidget, "mapped?", gtk3_widget_get_mapped, 0);
+
+    rb_define_method(gtk3_cWidget, "realize", gtk3_widget_realize, 0);
+    rb_define_method(gtk3_cWidget, "unrealize", gtk3_widget_unrealize, 0);
+    rb_define_method(gtk3_cWidget, "realized?", gtk3_widget_get_realized, 0);
+
     rb_define_method(gtk3_cWidget, "show", gtk3_widget_show, 0);
     rb_define_method(gtk3_cWidget, "show_all", gtk3_widget_show_all, 0);
+    rb_define_method(gtk3_cWidget, "show_now", gtk3_widget_show_now, 0);
+
+    rb_define_method(
+        gtk3_cWidget,
+        "allocated_width",
+        gtk3_widget_get_allocated_width,
+        0
+    );
+
+    rb_define_method(
+        gtk3_cWidget,
+        "allocated_height",
+        gtk3_widget_get_allocated_height,
+        0
+    );
+
+    rb_define_method(gtk3_cWidget, "queue_draw", gtk3_widget_queue_draw, 0);
+
+    rb_define_method(
+        gtk3_cWidget,
+        "queue_draw_area",
+        gtk3_widget_queue_draw_area,
+        4
+    );
+
     rb_define_method(gtk3_cWidget, "unparent", gtk3_widget_unparent, 0);
-    rb_define_method(gtk3_cWidget, "visible?", gtk3_widget_get_visible, 0);
 
     gtk3_id_to_s   = rb_intern("to_s");
     gtk3_id_before = rb_intern("before");

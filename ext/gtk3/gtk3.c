@@ -38,6 +38,18 @@ static VALUE gtk3_main_quit(VALUE self)
 }
 
 /**
+ * Runs a single iteration of the GTK event loop.
+ *
+ * @since 2012-06-05
+ */
+static VALUE gtk3_main_iteration(VALUE self)
+{
+    gtk_main_iteration();
+
+    return Qnil;
+}
+
+/**
  * Sets up all the provides classes and modules.
  *
  * @since 2012-05-29
@@ -50,6 +62,13 @@ void Init_gtk3()
 
     rb_define_singleton_method(gtk3_mGtk3, "main", gtk3_main, 0);
     rb_define_singleton_method(gtk3_mGtk3, "main_quit", gtk3_main_quit, 0);
+
+    rb_define_singleton_method(
+        gtk3_mGtk3,
+        "main_iteration",
+        gtk3_main_iteration,
+        0
+    );
 
     Init_gtk3_gvalue();
     Init_gtk3_closure();
