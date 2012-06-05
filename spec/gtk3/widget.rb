@@ -1,7 +1,7 @@
 require File.expand_path('../../helper', __FILE__)
 
 describe 'Gtk3::Widget' do
-  it 'Widget#connect with incorrect argument numbers' do
+  it 'Connect a signal with incorrect argument numbers' do
     window = Gtk3::Window.new
 
     should.raise?(ArgumentError) { window.connect } \
@@ -11,21 +11,21 @@ describe 'Gtk3::Widget' do
       .message.should =~ %r{3 for 1..2}
   end
 
-  it 'Widget#connect with an invalid signal name' do
+  it 'Connect a signal with an invalid signal name' do
     window = Gtk3::Window.new
 
     should.raise?(ArgumentError) { window.connect('does-not-exist') {} } \
       .message.should == 'invalid signal name'
   end
 
-  it 'Widget#connect without a block' do
+  it 'Connect a signal without a block' do
     window = Gtk3::Window.new
 
     should.raise?(LocalJumpError) { window.connect(:destroy) } \
       .message.should == 'no block given'
   end
 
-  it 'Widget#connect with an invalid position' do
+  it 'Connect a signal with an invalid position' do
     window = Gtk3::Window.new
 
     error = should.raise?(ArgumentError) do
@@ -35,7 +35,7 @@ describe 'Gtk3::Widget' do
     error.message.should =~ /invalid signal position/
   end
 
-  it 'Widget#connect should return a valid handler ID' do
+  it 'Connceting to a signal should return a valid handler ID' do
     window = Gtk3::Window.new
     id     = window.connect(:destroy) {}
 
@@ -105,6 +105,36 @@ describe 'Gtk3::Widget' do
 
     window.visible?.should == true
     window.mapped?.should  == true
+
+    window.destroy
+  end
+
+  it 'Get the allocated dimensions of a widget' do
+    window = Gtk3::Window.new
+
+    window.show
+
+    while Gtk3.events_pending?
+      Gtk3.main_iteration
+    end
+
+    window.allocated_width.should  > 0
+    window.allocated_height.should > 0
+
+    window.destroy
+  end
+
+  it 'Queue the drawing of a widget area' do
+    window = Gtk3::Window.new
+    error  = should.raise?(TypeError) do
+      window.queue_draw_area('10', '20', '30', '40')
+    end
+
+    error.message.should =~ /wrong argument type String/
+
+    should.not.raise?(TypeError) do
+      window.queue_draw_area(10, 20, 30, 40)
+    end
 
     window.destroy
   end

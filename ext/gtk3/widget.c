@@ -500,11 +500,10 @@ static VALUE gtk3_widget_queue_draw_area(
 {
     GtkWidget *widget;
 
-    /* TODO: Maybe support Bignum as well? */
-    Check_Type(x, T_FIXNUM);
-    Check_Type(y, T_FIXNUM);
-    Check_Type(width, T_FIXNUM);
-    Check_Type(height, T_FIXNUM);
+    gtk3_check_number(x);
+    gtk3_check_number(y);
+    gtk3_check_number(width);
+    gtk3_check_number(height);
 
     Data_Get_Struct(self, GtkWidget, widget);
 
@@ -515,6 +514,41 @@ static VALUE gtk3_widget_queue_draw_area(
         FIX2INT(width),
         FIX2INT(height)
     );
+
+    return Qnil;
+}
+
+/**
+ * Flags a widget to have its size renegotiated.
+ *
+ * @todo  Test this method.
+ * @since 2012-06-05
+ */
+static VALUE gtk3_widget_queue_resize(VALUE self)
+{
+    GtkWidget *widget;
+
+    Data_Get_Struct(self, GtkWidget, widget);
+
+    gtk_widget_queue_resize(widget);
+
+    return Qnil;
+}
+
+/**
+ * Flags a widget to have its size renegotiated. Unlike
+ * {Gtk3::Widget#queue_resize} this method will not invalidate the widget.
+ *
+ * @todo  Test this method.
+ * @since 2012-06-05
+ */
+static VALUE gtk3_widget_queue_resize_no_redraw(VALUE self)
+{
+    GtkWidget *widget;
+
+    Data_Get_Struct(self, GtkWidget, widget);
+
+    gtk_widget_queue_resize_no_redraw(widget);
 
     return Qnil;
 }
@@ -592,6 +626,15 @@ void Init_gtk3_widget()
         "queue_draw_area",
         gtk3_widget_queue_draw_area,
         4
+    );
+
+    rb_define_method(gtk3_cWidget, "queue_resize", gtk3_widget_queue_resize, 0);
+
+    rb_define_method(
+        gtk3_cWidget,
+        "queue_resize_no_redraw",
+        gtk3_widget_queue_resize_no_redraw,
+        0
     );
 
     rb_define_method(gtk3_cWidget, "unparent", gtk3_widget_unparent, 0);

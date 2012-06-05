@@ -50,6 +50,24 @@ static VALUE gtk3_main_iteration(VALUE self)
 }
 
 /**
+ * Returns `true` if there are pending events, `false` otherwise.
+ *
+ * @since  2012-06-05
+ * @return [TrueClass|FalseClass]
+ */
+static VALUE gtk3_events_pending(VALUE self)
+{
+    if ( gtk_events_pending() == TRUE )
+    {
+        return Qtrue;
+    }
+    else
+    {
+        return Qfalse;
+    }
+}
+
+/**
  * Sets up all the provides classes and modules.
  *
  * @since 2012-05-29
@@ -70,8 +88,16 @@ void Init_gtk3()
         0
     );
 
+    rb_define_singleton_method(
+        gtk3_mGtk3,
+        "events_pending?",
+        gtk3_events_pending,
+        0
+    );
+
     Init_gtk3_gvalue();
     Init_gtk3_closure();
+    Init_gtk3_type();
     Init_gtk3_widget();
     Init_gtk3_window();
 }

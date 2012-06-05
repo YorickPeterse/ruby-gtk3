@@ -5,6 +5,7 @@
 #include <gtk/gtk.h>
 #include "closure.h"
 #include "gvalue.h"
+#include "type.h"
 #include "widget.h"
 #include "window.h"
 
