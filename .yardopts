@@ -1,4 +1,4 @@
-./lib/gtk3/**/*.rb ./lib/gtk3.rb
+./lib/gtk3/**/*.rb ./lib/gtk3.rb ./ext/gtk3/**/*.c
 -m markdown
 -M redcarpet
 -o ./doc
