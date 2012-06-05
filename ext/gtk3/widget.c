@@ -212,20 +212,10 @@ static VALUE gtk3_widget_destroy(VALUE self)
 static VALUE gtk3_widget_in_destruction(VALUE self)
 {
     GtkWidget *widget;
-    gboolean destruction = FALSE;
 
     Data_Get_Struct(self, GtkWidget, widget);
 
-    destruction = gtk_widget_in_destruction(widget);
-
-    if ( destruction == TRUE )
-    {
-        return Qtrue;
-    }
-    else
-    {
-        return Qfalse;
-    }
+    return gtk3_gboolean_to_rboolean(gtk_widget_in_destruction(widget));
 }
 
 /**
@@ -256,14 +246,7 @@ static VALUE gtk3_widget_get_visible(VALUE self)
 
     Data_Get_Struct(self, GtkWidget, widget);
 
-    if ( gtk_widget_get_visible(widget) == TRUE )
-    {
-        return Qtrue;
-    }
-    else
-    {
-        return Qfalse;
-    }
+    return gtk3_gboolean_to_rboolean(gtk_widget_get_visible(widget));
 }
 
 /**
@@ -309,14 +292,7 @@ static VALUE gtk3_widget_get_mapped(VALUE self)
 
     Data_Get_Struct(self, GtkWidget, widget);
 
-    if ( gtk_widget_get_mapped(widget) == TRUE )
-    {
-        return Qtrue;
-    }
-    else
-    {
-        return Qfalse;
-    }
+    return gtk3_gboolean_to_rboolean(gtk_widget_get_mapped(widget));
 }
 
 /**
@@ -363,14 +339,7 @@ static VALUE gtk3_widget_get_realized(VALUE self)
 
     Data_Get_Struct(self, GtkWidget, widget);
 
-    if ( gtk_widget_get_realized(widget) == TRUE )
-    {
-        return Qtrue;
-    }
-    else
-    {
-        return Qfalse;
-    }
+    return gtk3_gboolean_to_rboolean(gtk_widget_get_realized(widget));
 }
 
 /**

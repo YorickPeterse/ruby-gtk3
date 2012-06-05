@@ -15,6 +15,25 @@ static ID gtk3_id_class;
 static ID gtk3_id_to_s;
 
 /**
+ * Converts a `gboolean` to a Ruby boolean.
+ *
+ * @since  2012-06-05
+ * @param  [gboolean] boolean The boolean to convert.
+ * @return [VALUE]
+ */
+VALUE gtk3_gboolean_to_rboolean(gboolean boolean)
+{
+    if ( boolean == TRUE )
+    {
+        return Qtrue;
+    }
+    else
+    {
+        return Qfalse;
+    }
+}
+
+/**
  * Converts a Ruby value to a GValue.
  *
  * TODO: currently the amount of types this function can handle is rather

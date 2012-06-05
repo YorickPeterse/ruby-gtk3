@@ -57,14 +57,7 @@ static VALUE gtk3_main_iteration(VALUE self)
  */
 static VALUE gtk3_events_pending(VALUE self)
 {
-    if ( gtk_events_pending() == TRUE )
-    {
-        return Qtrue;
-    }
-    else
-    {
-        return Qfalse;
-    }
+    return gtk3_gboolean_to_rboolean(gtk_events_pending());
 }
 
 /**
