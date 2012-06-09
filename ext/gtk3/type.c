@@ -84,21 +84,32 @@ void gtk3_rbvalue_to_gvalue(VALUE rbvalue, GValue *gvalue)
 void gtk3_check_number(VALUE number)
 {
     VALUE type = TYPE(number);
-    VALUE rb_class;
-    char *class;
 
     if ( type != T_FIXNUM && type != T_BIGNUM )
     {
-        rb_class = rb_funcall(number, gtk3_id_class, 0);
-        rb_class = rb_funcall(rb_class, gtk3_id_to_s, 0);
-        class    = StringValuePtr(rb_class);
-
         rb_raise(
             rb_eTypeError,
             "wrong argument type %s (expected Fixnum or Bignum)",
-            class
+            gtk3_get_rbclass(number)
         );
     }
+}
+
+/**
+ * Returns the class name of a Ruby object as a C string.
+ *
+ * @since  2012-06-09
+ * @param  [VALUE] object The object for which to retrieve the class.
+ * @return [char *]
+ */
+char *gtk3_get_rbclass(VALUE object)
+{
+    VALUE object_class;
+
+   object_class = rb_funcall(object, gtk3_id_class, 0);
+   object_class = rb_funcall(object_class, gtk3_id_to_s, 0);
+
+   return StringValuePtr(object_class);
 }
 
 /**

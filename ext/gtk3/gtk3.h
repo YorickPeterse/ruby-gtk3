@@ -5,6 +5,10 @@
 #include <gtk/gtk.h>
 #include "closure.h"
 #include "type.h"
+#include "lookup_constant.h"
+#include "modifier_type.h"
+#include "accel_flag.h"
+#include "accel_group.h"
 #include "widget.h"
 #include "window.h"
 

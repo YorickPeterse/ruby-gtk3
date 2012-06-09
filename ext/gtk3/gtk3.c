@@ -90,6 +90,10 @@ void Init_gtk3()
 
     Init_gtk3_closure();
     Init_gtk3_type();
+    Init_gtk3_lookup_constant();
+    Init_gtk3_modifier_type();
+    Init_gtk3_accel_flag();
+    Init_gtk3_accel_group();
     Init_gtk3_widget();
     Init_gtk3_window();
 }
