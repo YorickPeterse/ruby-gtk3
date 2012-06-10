@@ -13,7 +13,7 @@ describe 'Gtk3::AccelGroupEntry' do
     entry.key.should      == 113
     entry.modifier.should == Gtk3::ModifierType::CONTROL
     entry.flags.should    == Gtk3::AccelFlag::VISIBLE
-    entry.path.should     == '<Control>q'
+    entry.path.should     == '<Primary>q'
     entry.callback.should == callback
   end
 end
