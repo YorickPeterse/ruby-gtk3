@@ -67,7 +67,7 @@ describe 'Gtk3::AccelGroup' do
     entries[0].key.should      == 113
     entries[0].modifier.should == Gtk3::ModifierType::CONTROL
     entries[0].flags.should    == Gtk3::AccelFlag::VISIBLE
-    entries[0].path.should     == '<Control>q'
+    entries[0].path.should     == '<Primary>q'
   end
 
   it 'Install and disconnect and accelerator' do

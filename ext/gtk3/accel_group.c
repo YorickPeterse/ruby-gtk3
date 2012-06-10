@@ -334,7 +334,6 @@ static VALUE gtk3_accel_group_query(VALUE self, VALUE key, VALUE mod)
     */
     unsigned int entry_index;
     VALUE entry;
-    VALUE entry_path;
     GtkAccelKey entry_key;
     RClosure *entry_closure;
 
@@ -357,28 +356,16 @@ static VALUE gtk3_accel_group_query(VALUE self, VALUE key, VALUE mod)
     */
     for ( entry_index = 0; entry_index < n_entries; entry_index++ )
     {
-        if ( entries[entry_index].accel_path_quark )
-        {
-            entry_path = rb_str_new2(
-                g_quark_to_string(entries[entry_index].accel_path_quark)
-            );
-        }
-        else
-        {
-            entry_path = rb_str_new2("");
-        }
-
         entry_key     = entries[entry_index].key;
         entry_closure = (RClosure *) entries[entry_index].closure;
 
         entry = rb_funcall(
             gtk3_cAccelGroupEntry,
             gtk3_id_new,
-            5,
+            4,
             INT2NUM(entry_key.accel_key),
             INT2NUM(entry_key.accel_mods),
             INT2NUM(entry_key.accel_flags),
-            entry_path,
             entry_closure->proc
         );
 

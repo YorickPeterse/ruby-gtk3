@@ -7,7 +7,6 @@ describe 'Gtk3::AccelGroupEntry' do
       113,
       Gtk3::ModifierType::CONTROL,
       Gtk3::AccelFlag::VISIBLE,
-      '<Control>q',
       callback
     )
 

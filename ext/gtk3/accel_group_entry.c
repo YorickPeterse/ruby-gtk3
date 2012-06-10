@@ -9,6 +9,13 @@
 VALUE gtk3_cAccelGroupEntry;
 
 /**
+ * ID for the symbol `:accelerator_name`.
+ *
+ * @since 2012-06-10
+ */
+static ID gtk3_id_accelerator_name;
+
+/**
  * Creates a new instance of the class and stores the accelerator key, callback
  * and accelerator path.
  *
@@ -16,7 +23,6 @@ VALUE gtk3_cAccelGroupEntry;
  * @param [Fixnum|Bignum] key The accelerator key.
  * @param [Fixnum|Bignum] mod The accelerator modifier.
  * @param [Fixnum|Bignum] flags The accelerator flags.
- * @param [String] path The accelerator key path.
  * @param [Proc] callback The accelerator callback.
  */
 static VALUE gtk3_accel_group_entry_initialize(
@@ -24,7 +30,6 @@ static VALUE gtk3_accel_group_entry_initialize(
     VALUE key,
     VALUE mod,
     VALUE flags,
-    VALUE path,
     VALUE callback
 )
 {
@@ -33,8 +38,6 @@ static VALUE gtk3_accel_group_entry_initialize(
     gtk3_check_number(key);
     gtk3_check_number(mod);
     gtk3_check_number(flags);
-
-    Check_Type(path, T_STRING);
 
     if ( strcmp(callback_class, "Proc") )
     {
@@ -48,8 +51,13 @@ static VALUE gtk3_accel_group_entry_initialize(
     rb_iv_set(self, "@key", key);
     rb_iv_set(self, "@modifier", mod);
     rb_iv_set(self, "@flags", flags);
-    rb_iv_set(self, "@path", path);
     rb_iv_set(self, "@callback", callback);
+
+    rb_iv_set(
+        self,
+        "@path",
+        rb_funcall(gtk3_cAccelGroup, gtk3_id_accelerator_name, 2, key, mod)
+    );
 
     return self;
 }
@@ -71,7 +79,7 @@ void Init_gtk3_accel_group_entry()
         gtk3_cAccelGroupEntry,
         "initialize",
         gtk3_accel_group_entry_initialize,
-        5
+        4
     );
 
     rb_define_attr(gtk3_cAccelGroupEntry, "key", TRUE, FALSE);
@@ -79,4 +87,6 @@ void Init_gtk3_accel_group_entry()
     rb_define_attr(gtk3_cAccelGroupEntry, "flags", TRUE, FALSE);
     rb_define_attr(gtk3_cAccelGroupEntry, "path", TRUE, FALSE);
     rb_define_attr(gtk3_cAccelGroupEntry, "callback", TRUE, FALSE);
+
+    gtk3_id_accelerator_name = rb_intern("accelerator_name");
 }
