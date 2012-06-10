@@ -94,6 +94,7 @@ void Init_gtk3()
     Init_gtk3_modifier_type();
     Init_gtk3_accel_flag();
     Init_gtk3_accel_group();
+    Init_gtk3_accel_group_entry();
     Init_gtk3_widget();
     Init_gtk3_window();
 }

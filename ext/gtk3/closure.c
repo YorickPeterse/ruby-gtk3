@@ -8,23 +8,6 @@
 static ID gtk3_id_call;
 
 /**
- * Closure structure that is used for binding procs to signals in Ruby code.
- * This structure has the following members:
- *
- * * closure
- * * proc: the proc to call.
- * * object: the Ruby object of the event.
- *
- * @since 2012-06-03
- */
-struct RClosure
-{
-    GClosure closure;
-    VALUE proc;
-    VALUE object;
-};
-
-/**
  * Called whenever a closure is no longer valid. This function unsets the
  * contents of the RClosure struct and frees any allocated memory.
  *

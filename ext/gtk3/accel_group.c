@@ -15,6 +15,77 @@ VALUE gtk3_cAccelGroup;
 static ID gtk3_id_lookup;
 
 /**
+ * ID for the `:new` symbol.
+ *
+ * @since 2012-06-10
+ */
+static ID gtk3_id_new;
+
+/* Helper methods, not exposed to Ruby code. */
+
+/**
+ * Looks up an accelerator modifier and returns the value. If no modifier was
+ * found `ArgumentError` is raised instead.
+ *
+ * @since  2012-06-10
+ * @param  [VALUE] modifier The modifier to look up.
+ * @raise  [ArgumentError] Raised when the specified modifier is invalid.
+ * @return [VALUE]
+ */
+static VALUE gtk3_accel_group_lookup_modifier(VALUE modifier)
+{
+    VALUE modifier_type = TYPE(modifier);
+
+    if ( modifier_type == T_STRING || modifier_type == T_SYMBOL )
+    {
+        modifier = rb_funcall(gtk3_mModifierType, gtk3_id_lookup, 1, modifier);
+    }
+    else
+    {
+        gtk3_check_number(modifier);
+    }
+
+    if ( NIL_P(modifier) )
+    {
+        rb_raise(rb_eArgError, "invalid accelerator modifier");
+    }
+
+    return modifier;
+}
+
+/**
+ * Looks up an accelerator flag and returns the value. If no flag was
+ * found `ArgumentError` is raised instead.
+ *
+ * @since  2012-06-10
+ * @param  [VALUE] flag The modifier to look up.
+ * @raise  [ArgumentError] Raised when the specified flag is invalid.
+ * @return [VALUE]
+ */
+static VALUE gtk3_accel_group_lookup_flag(VALUE flag)
+{
+    VALUE flag_type = TYPE(flag);
+
+    if ( flag_type == T_STRING || flag_type == T_SYMBOL )
+    {
+        flag = rb_funcall(gtk3_mAccelFlag, gtk3_id_lookup, 1, flag);
+    }
+    else
+    {
+        gtk3_check_number(flag);
+    }
+
+    if ( NIL_P(flag) )
+    {
+        rb_raise(rb_eArgError, "invalid accelerator flag");
+    }
+
+    return flag;
+}
+
+/* Class methods */
+
+/**
  * Creates a new instance of the class.
  *
  * @since 2012-06-08
@@ -36,6 +107,53 @@ static VALUE gtk3_accel_group_new(VALUE class)
 
     return struct_data;
 }
+
+/**
+ * Parses a key code and modifier and returns the accelerator name (also known
+ * as "path").
+ *
+ * @example
+ *  Gtk3::AccelGroup.accelerator_name(113, :shift) => "<Shift>q"
+ *
+ * @since  2012-06-10
+ * @param  [Fixnum|Bignum] key The accelerator key.
+ * @param  [Fixnum|Bignum|String|Symbol] modifier The accelerator modifier.
+ * @return [String]
+ */
+static VALUE gtk3_accel_group_accelerator_name(
+    VALUE class,
+    VALUE key,
+    VALUE modifier
+)
+{
+    modifier = gtk3_accel_group_lookup_modifier(modifier);
+
+    return rb_str_new2(gtk_accelerator_name(NUM2INT(key), NUM2INT(modifier)));
+}
+
+/**
+ * Returns a string containing a user friendly representation of an accelerator
+ * key and modifier.
+ *
+ * @since  2012-06-10
+ * @param  [Fixnum|Bignum] key The accelerator key.
+ * @param  [Fixnum|Bignum|String|Symbol] modifier The accelerator modifier.
+ * @return [String]
+ */
+static VALUE gtk3_accel_group_accelerator_label(
+    VALUE class,
+    VALUE key,
+    VALUE modifier
+)
+{
+    modifier = gtk3_accel_group_lookup_modifier(modifier);
+
+    return rb_str_new2(
+        gtk_accelerator_get_label(NUM2INT(key), NUM2INT(modifier))
+    );
+}
+
+/* Instance methods */
 
 /**
  * Installs an accelerator in the group.
@@ -70,39 +188,39 @@ static VALUE gtk3_accel_group_connect(
     VALUE flag
 )
 {
-    VALUE modifier_type = TYPE(modifier);
-    VALUE flag_type     = TYPE(flag);
     RClosure *closure;
     GtkAccelGroup *group;
 
+    int key_int;
+    int modifier_int;
+    int flag_int;
+
     rb_need_block();
 
-    /**
-     * Lookup the modifier and flag if they're specified as a String or Symbol.
-     */
-    if ( modifier_type == T_STRING || modifier_type == T_SYMBOL )
-    {
-        modifier = rb_funcall(gtk3_mModifierType, gtk3_id_lookup, 1, modifier);
-    }
-    else
-    {
-        gtk3_check_number(modifier);
-    }
+    gtk3_check_number(key);
 
-    if ( flag_type == T_STRING || flag_type == T_SYMBOL )
+    modifier     = gtk3_accel_group_lookup_modifier(modifier);
+    flag         = gtk3_accel_group_lookup_flag(flag);
+    key_int      = NUM2INT(key);
+    modifier_int = NUM2INT(modifier);
+    flag_int     = NUM2INT(flag);
+
+    if ( !gtk_accelerator_valid(key_int, modifier_int) )
     {
-        flag = rb_funcall(gtk3_mAccelFlag, gtk3_id_lookup, 1, flag);
-    }
-    else
-    {
-        gtk3_check_number(flag);
+        rb_raise(rb_eArgError, "invalid key value and/or modifier");
     }
 
     Data_Get_Struct(self, GtkAccelGroup, group);
 
     closure = gtk3_closure_new(rb_block_proc(), self);
 
-    gtk_accel_group_connect(group, key, modifier, flag, (GClosure *) closure);
+    gtk_accel_group_connect(
+        group,
+        key_int,
+        modifier_int,
+        flag_int,
+        (GClosure *) closure
+    );
 
     return Qnil;
 }
@@ -128,6 +246,8 @@ static VALUE gtk3_accel_group_connect_by_path(VALUE self, VALUE path)
     RClosure *closure;
     GtkAccelGroup *group;
     const gchar *path_gchar;
+    guint key;
+    GdkModifierType modifier;
 
     rb_need_block();
 
@@ -136,11 +256,136 @@ static VALUE gtk3_accel_group_connect_by_path(VALUE self, VALUE path)
     Data_Get_Struct(self, GtkAccelGroup, group);
 
     path_gchar = g_intern_static_string(StringValuePtr(path));
-    closure    = gtk3_closure_new(rb_block_proc(), self);
+
+    /* Check if the specified path is valid. */
+    gtk_accelerator_parse(path_gchar, &key, &modifier);
+
+    if ( !key || !modifier )
+    {
+        rb_raise(rb_eArgError, "invalid accelerator path");
+    }
+
+    closure = gtk3_closure_new(rb_block_proc(), self);
 
     gtk_accel_group_connect_by_path(group, path_gchar, (GClosure *) closure);
 
     return Qnil;
+}
+
+/**
+ * Disconnects an accelerator that was connected to the specified key and
+ * modifier.
+ *
+ * @example
+ *  group = Gtk3::AccelGroup.new
+ *
+ *  group.connect(113, :control, :visible)
+ *  group.disconnect_key(113, :control) # => true
+ *
+ * @since 2012-06-09
+ * @param [Fixnum|Bignum] key The key number to use for disconnecting a
+ *  callback.
+ * @param [String|Symbol|Fixnum|Bignum] mod The key modifier.
+ */
+static VALUE gtk3_accel_group_disconnect_key(VALUE self, VALUE key, VALUE mod)
+{
+    GtkAccelGroup *group;
+
+    gtk3_check_number(key);
+
+    mod = gtk3_accel_group_lookup_modifier(mod);
+
+    Data_Get_Struct(self, GtkAccelGroup, group);
+
+    return gtk3_gboolean_to_rboolean(
+        gtk_accel_group_disconnect_key(
+            group,
+            INT2NUM(key),
+            INT2NUM(mod)
+        )
+    );
+}
+
+/**
+ * Queries an accelerator group for the given key and modifier. The return
+ * value is an array of instances of {Gtk3::AccelGroupEntry} objects.
+ *
+ * @example
+ *  group = Gtk3::AccelGroup.new
+ *
+ *  group.connect(113, :control, :visible) {}
+ *  group.query(113, :control) => [#<Gtk3::AccelGroupEntry ...>]
+ *
+ * @since 2012-06-10
+ * @param [Fixnum|Bignum] key The key number to query.
+ * @param [Fixnum|Bignum|String|Symbol] mod The modifier to query.
+ */
+static VALUE gtk3_accel_group_query(VALUE self, VALUE key, VALUE mod)
+{
+    VALUE rb_entries = rb_ary_new();
+
+    GtkAccelGroup *group;
+    GtkAccelGroupEntry *entries;
+    guint n_entries;
+
+    /*
+    Variables used when looping over the return value of
+    gtk_accel_group_query().
+    */
+    unsigned int entry_index;
+    VALUE entry;
+    VALUE entry_path;
+    GtkAccelKey entry_key;
+    RClosure *entry_closure;
+
+    gtk3_check_number(key);
+
+    mod = gtk3_accel_group_lookup_modifier(mod);
+
+    Data_Get_Struct(self, GtkAccelGroup, group);
+
+    entries = gtk_accel_group_query(
+        group,
+        NUM2INT(key),
+        NUM2INT(mod),
+        &n_entries
+    );
+
+    /*
+    Loop through each entry and convert it to a Ruby instance of
+    {Gtk3::AccelGroupEntry}.
+    */
+    for ( entry_index = 0; entry_index < n_entries; entry_index++ )
+    {
+        if ( entries[entry_index].accel_path_quark )
+        {
+            entry_path = rb_str_new2(
+                g_quark_to_string(entries[entry_index].accel_path_quark)
+            );
+        }
+        else
+        {
+            entry_path = rb_str_new2("");
+        }
+
+        entry_key     = entries[entry_index].key;
+        entry_closure = (RClosure *) entries[entry_index].closure;
+
+        entry = rb_funcall(
+            gtk3_cAccelGroupEntry,
+            gtk3_id_new,
+            5,
+            INT2NUM(entry_key.accel_key),
+            INT2NUM(entry_key.accel_mods),
+            INT2NUM(entry_key.accel_flags),
+            entry_path,
+            entry_closure->proc
+        );
+
+        rb_ary_push(rb_entries, entry);
+    }
+
+    return rb_entries;
 }
 
 /**
@@ -163,6 +408,20 @@ void Init_gtk3_accel_group()
         0
     );
 
+    rb_define_singleton_method(
+        gtk3_cAccelGroup,
+        "accelerator_name",
+        gtk3_accel_group_accelerator_name,
+        2
+    );
+
+    rb_define_singleton_method(
+        gtk3_cAccelGroup,
+        "accelerator_label",
+        gtk3_accel_group_accelerator_label,
+        2
+    );
+
     rb_define_method(
         gtk3_cAccelGroup,
         "connect",
@@ -177,5 +436,15 @@ void Init_gtk3_accel_group()
         1
     );
 
+    rb_define_method(
+        gtk3_cAccelGroup,
+        "disconnect_key",
+        gtk3_accel_group_disconnect_key,
+        2
+    );
+
+    rb_define_method(gtk3_cAccelGroup, "query", gtk3_accel_group_query, 2);
+
     gtk3_id_lookup = rb_intern("lookup");
+    gtk3_id_new    = rb_intern("new");
 }

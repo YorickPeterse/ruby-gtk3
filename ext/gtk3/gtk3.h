@@ -9,6 +9,7 @@
 #include "modifier_type.h"
 #include "accel_flag.h"
 #include "accel_group.h"
+#include "accel_group_entry.h"
 #include "widget.h"
 #include "window.h"
 
