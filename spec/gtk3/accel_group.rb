@@ -11,6 +11,44 @@ describe 'Gtk3::AccelGroup' do
     Gtk3::AccelGroup.accelerator_label(113, :shift).should   == 'Shift+Q'
   end
 
+  it 'Set the default accelerator modifier' do
+    default = Gtk3::AccelGroup.default_modifier
+
+    Gtk3::AccelGroup.default_modifier = Gtk3::ModifierType::CONTROL | \
+      Gtk3::ModifierType::SHIFT | \
+      Gtk3::ModifierType::MOD1
+
+    Gtk3::AccelGroup.default_modifier.should == Gtk3::ModifierType::CONTROL | \
+      Gtk3::ModifierType::SHIFT | \
+      Gtk3::ModifierType::MOD1
+
+    Gtk3::AccelGroup.default_modifier = Gtk3::ModifierType::CONTROL | \
+      Gtk3::ModifierType::SHIFT | \
+      Gtk3::ModifierType::MOD1 | \
+      Gtk3::ModifierType::MOD2
+
+    Gtk3::AccelGroup.default_modifier.should == Gtk3::ModifierType::CONTROL | \
+      Gtk3::ModifierType::SHIFT | \
+      Gtk3::ModifierType::MOD1 | \
+      Gtk3::ModifierType::MOD2
+
+    Gtk3::AccelGroup.default_modifier = default
+  end
+
+  it 'Lock an accelerator group' do
+    group = Gtk3::AccelGroup.new
+
+    group.locked?.should == false
+
+    group.lock
+
+    group.locked?.should == true
+
+    group.unlock
+
+    group.locked?.should == false
+  end
+
   it 'Installing an accelerator requires a block' do
     group = Gtk3::AccelGroup.new
     error = should.raise?(LocalJumpError) do
@@ -52,7 +90,7 @@ describe 'Gtk3::AccelGroup' do
     should.raise(ArgumentError) { group.connect_by_path('<Control>@') {} } \
       .message.should == 'invalid accelerator path'
 
-    # TODO: test the code when the accelerator *is* valid.
+    should.flunk 'no code is being tested for valid accelerator paths'
   end
 
   it 'Query an accelerator group' do

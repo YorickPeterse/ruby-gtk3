@@ -153,7 +153,82 @@ static VALUE gtk3_accel_group_accelerator_label(
     );
 }
 
+/**
+ * Sets the default modifier mask to use.
+ *
+ * @since 2012-06-11
+ * @param [Fixnum|Bignum] mod The accelerator modifier. Unlike other
+ *  accelerator methods this method does not perform a lookup based on a symbol,
+ *  thus a number should always be passed.
+ */
+static VALUE gtk3_accel_group_set_default_modifier(VALUE class, VALUE mod)
+{
+    gtk3_check_number(mod);
+
+    gtk_accelerator_set_default_mod_mask(NUM2INT(mod));
+
+    return Qnil;
+}
+
+/**
+ * Returns the default modifier mask.
+ *
+ * @since  2012-06-11
+ * @return [Fixnum|Bignum]
+ */
+static VALUE gtk3_accel_group_get_default_modifier(VALUE class)
+{
+    return INT2NUM(gtk_accelerator_get_default_mod_mask());
+}
+
 /* Instance methods */
+
+/**
+ * Locks the accelerator group.
+ *
+ * @since 2012-06-11
+ */
+static VALUE gtk3_accel_group_lock(VALUE self)
+{
+    GtkAccelGroup *group;
+
+    Data_Get_Struct(self, GtkAccelGroup, group);
+
+    gtk_accel_group_lock(group);
+
+    return Qnil;
+}
+
+/**
+ * Unlocks the accelerator group.
+ *
+ * @since 2012-06-11
+ */
+static VALUE gtk3_accel_group_unlock(VALUE self)
+{
+    GtkAccelGroup *group;
+
+    Data_Get_Struct(self, GtkAccelGroup, group);
+
+    gtk_accel_group_unlock(group);
+
+    return Qnil;
+}
+
+/**
+ * Returns a boolean that indicates if the accelerator group is locked or not.
+ *
+ * @since  2012-06-11
+ * @return [TrueClass|FalseClass]
+ */
+static VALUE gtk3_accel_group_get_locked(VALUE self)
+{
+    GtkAccelGroup *group;
+
+    Data_Get_Struct(self, GtkAccelGroup, group);
+
+    return gtk3_gboolean_to_rboolean(gtk_accel_group_get_is_locked(group));
+}
 
 /**
  * Installs an accelerator in the group.
@@ -407,6 +482,30 @@ void Init_gtk3_accel_group()
         "accelerator_label",
         gtk3_accel_group_accelerator_label,
         2
+    );
+
+    rb_define_singleton_method(
+        gtk3_cAccelGroup,
+        "default_modifier=",
+        gtk3_accel_group_set_default_modifier,
+        1
+    );
+
+    rb_define_singleton_method(
+        gtk3_cAccelGroup,
+        "default_modifier",
+        gtk3_accel_group_get_default_modifier,
+        0
+    );
+
+    rb_define_method(gtk3_cAccelGroup, "lock", gtk3_accel_group_lock, 0);
+    rb_define_method(gtk3_cAccelGroup, "unlock", gtk3_accel_group_unlock, 0);
+
+    rb_define_method(
+        gtk3_cAccelGroup,
+        "locked?",
+        gtk3_accel_group_get_locked,
+        0
     );
 
     rb_define_method(
