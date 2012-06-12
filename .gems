@@ -3,5 +3,6 @@
 # Development Dependencies
 bacon
 rake
+rake-compiler
 redcarpet
 yard
