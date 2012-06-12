@@ -1,6 +1,16 @@
 #include "window.h"
 
 /**
+ * Document-class: Gtk3::Window
+ *
+ * {Gtk3::Window} is a toplevel window class which can contain other widgets
+ * such as buttons and panes.
+ *
+ * @since 2012-05-29
+ */
+VALUE gtk3_cWindow;
+
+/**
  * ID for the symbol `:toplevel`.
  *
  * @since 2012-06-03
@@ -13,16 +23,6 @@ static ID gtk3_id_toplevel;
  * @since 2012-06-03
  */
 static ID gtk3_id_popup;
-
-/**
- * Document-class: Gtk3::Window
- *
- * {Gtk3::Window} is a toplevel window class which can contain other widgets
- * such as buttons and panes.
- *
- * @since 2012-05-29
- */
-VALUE gtk3_cWindow;
 
 /**
  * Creates a new instance of the class and stores the window type.

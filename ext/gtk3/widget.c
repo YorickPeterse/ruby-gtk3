@@ -1,6 +1,15 @@
 #include "widget.h"
 
 /**
+ * Document-class: Gtk3::Widget
+ *
+ * {Gtk3::Widget} is a base class for all the widgets in the GTK+ toolkit.
+ *
+ * @since 2012-05-30
+ */
+VALUE gtk3_cWidget;
+
+/**
  * ID for the `:to_s` symbol.
  *
  * @since 2012-06-03
@@ -27,15 +36,6 @@ static ID gtk3_id_before;
  * @since 2012-06-03
  */
 static ID gtk3_id_after;
-
-/**
- * Document-class: Gtk3::Widget
- *
- * {Gtk3::Widget} is a base class for all the widgets in the GTK+ toolkit.
- *
- * @since 2012-05-30
- */
-VALUE gtk3_cWidget;
 
 /**
  * Binds the specified block to the given event name.
