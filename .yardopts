@@ -7,4 +7,5 @@
 --protected
 --asset ./guide/css/common.css:css/common.css
 -
+./guide/*.md
 LICENSE
