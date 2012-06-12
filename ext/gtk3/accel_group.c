@@ -88,6 +88,9 @@ static VALUE gtk3_accel_group_lookup_flag(VALUE flag)
 /**
  * Creates a new instance of the class.
  *
+ * @example
+ *  group = Gtk3::AccelGroup.new
+ *
  * @since 2012-06-08
  */
 static VALUE gtk3_accel_group_new(VALUE class)
@@ -110,7 +113,8 @@ static VALUE gtk3_accel_group_new(VALUE class)
 
 /**
  * Parses a key code and modifier and returns the accelerator name (also known
- * as "path").
+ * as "path"). If no accelerator name is found an empty string is returned
+ * instead.
  *
  * @example
  *  Gtk3::AccelGroup.accelerator_name(113, :shift) => "<Shift>q"
@@ -133,7 +137,7 @@ static VALUE gtk3_accel_group_accelerator_name(
 
 /**
  * Returns a string containing a user friendly representation of an accelerator
- * key and modifier.
+ * key and modifier. If no label is found an empty string is returned.
  *
  * @since  2012-06-10
  * @param  [Fixnum|Bignum] key The accelerator key.
@@ -154,7 +158,24 @@ static VALUE gtk3_accel_group_accelerator_label(
 }
 
 /**
- * Sets the default modifier mask to use.
+ * Sets the default modifier mask to use. Modifiers are set using the bitwise
+ * OR operator (`|`):
+ *
+ *     Gtk3::AccelGroup.default_modifier = Gtk3::ModifierType::CONTROL | \
+ *       Gtk3::ModifierType::SHIFT | \
+ *       Gtk3::ModifierType::MOD1
+ *
+ * When setting the modifier you must *at least* set the following modifiers:
+ *
+ * * {Gtk3::ModifierType::CONTROL}
+ * * {Gtk3::ModifierType::SHIFT}
+ * * {Gtk3::ModifierType::MOD1}
+ *
+ * @example
+ *  Gtk3::AccelGroup.default_modifier = Gtk3::ModifierType::CONTROL | \
+ *    Gtk3::ModifierType::SHIFT | \
+ *    Gtk3::ModifierType::MOD1 | \
+ *    Gtk3::ModifierType::MOD2
  *
  * @since 2012-06-11
  * @param [Fixnum|Bignum] mod The accelerator modifier. Unlike other
@@ -171,7 +192,16 @@ static VALUE gtk3_accel_group_set_default_modifier(VALUE class, VALUE mod)
 }
 
 /**
- * Returns the default modifier mask.
+ * Returns a number indicating the default modifier mask to use. This value is
+ * based on the modifiers set using bitwise OR operators.
+ *
+ * @example
+ *  Gtk3::AccelGroup.default_modifier = Gtk3::ModifierType::CONTROL | \
+ *    Gtk3::ModifierType::SHIFT | \
+ *    Gtk3::ModifierType::MOD1 | \
+ *    Gtk3::ModifierType::MOD2
+ *
+ *  Gtk3::AccelGroup.default_modifier # => 13
  *
  * @since  2012-06-11
  * @return [Fixnum|Bignum]
@@ -184,7 +214,14 @@ static VALUE gtk3_accel_group_get_default_modifier(VALUE class)
 /* Instance methods */
 
 /**
- * Locks the accelerator group.
+ * Locks the accelerator group. Locking an accelerator group prevents installed
+ * accelerators from being modifier.
+ *
+ * @example
+ *  group = Gtk3::AccelGroup.new
+ *
+ *  group.lock
+ *  group.locked? # => true
  *
  * @since 2012-06-11
  */
@@ -200,7 +237,17 @@ static VALUE gtk3_accel_group_lock(VALUE self)
 }
 
 /**
- * Unlocks the accelerator group.
+ * Unlocks the accelerator group. Unlocking a group makes it possible again to
+ * modify installed accelerators.
+ *
+ * @example
+ *  group = Gtk3::AccelGroup.new
+ *
+ *  group.lock
+ *  group.locked? # => true
+ *
+ *  group.unlock
+ *  group.locked? # => false
  *
  * @since 2012-06-11
  */
@@ -217,6 +264,11 @@ static VALUE gtk3_accel_group_unlock(VALUE self)
 
 /**
  * Returns a boolean that indicates if the accelerator group is locked or not.
+ *
+ * @example
+ *  group = Gtk3::AccelGroup.new
+ *
+ *  group.locked? # => false
  *
  * @since  2012-06-11
  * @return [TrueClass|FalseClass]
