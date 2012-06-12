@@ -319,10 +319,9 @@ static VALUE gtk3_accel_group_connect(
 {
     RClosure *closure;
     GtkAccelGroup *group;
-
-    int key_int;
-    int modifier_int;
-    int flag_int;
+    guint key_guint;
+    GdkModifierType gdk_modifier;
+    GtkAccelFlags gtk_flag;
 
     rb_need_block();
 
@@ -330,11 +329,11 @@ static VALUE gtk3_accel_group_connect(
 
     modifier     = gtk3_accel_group_lookup_modifier(modifier);
     flag         = gtk3_accel_group_lookup_flag(flag);
-    key_int      = NUM2INT(key);
-    modifier_int = NUM2INT(modifier);
-    flag_int     = NUM2INT(flag);
+    key_guint      = NUM2INT(key);
+    gdk_modifier = NUM2INT(modifier);
+    gtk_flag     = NUM2INT(flag);
 
-    if ( !gtk_accelerator_valid(key_int, modifier_int) )
+    if ( !gtk_accelerator_valid(key_guint, gdk_modifier) )
     {
         rb_raise(rb_eArgError, "invalid key value and/or modifier");
     }
@@ -345,9 +344,9 @@ static VALUE gtk3_accel_group_connect(
 
     gtk_accel_group_connect(
         group,
-        key_int,
-        modifier_int,
-        flag_int,
+        key_guint,
+        gdk_modifier,
+        gtk_flag,
         (GClosure *) closure
     );
 
@@ -418,20 +417,19 @@ static VALUE gtk3_accel_group_connect_by_path(VALUE self, VALUE path)
  */
 static VALUE gtk3_accel_group_disconnect_key(VALUE self, VALUE key, VALUE mod)
 {
+    guint key_guint;
+    GdkModifierType gdk_modifier;
     GtkAccelGroup *group;
 
     gtk3_check_number(key);
 
-    mod = gtk3_accel_group_lookup_modifier(mod);
+    key_guint    = NUM2INT(key);
+    gdk_modifier = NUM2INT(gtk3_accel_group_lookup_modifier(mod));
 
     Data_Get_Struct(self, GtkAccelGroup, group);
 
     return gtk3_gboolean_to_rboolean(
-        gtk_accel_group_disconnect_key(
-            group,
-            INT2NUM(key),
-            INT2NUM(mod)
-        )
+        gtk_accel_group_disconnect_key(group, key_guint, gdk_modifier)
     );
 }
 
