@@ -1,6 +1,8 @@
 #include "accel_group_entry.h"
 
 /**
+ * Document-class: Gtk3::AccelGroupEntry
+ *
  * {Gtk3::AccelGroupEntry} is a class used for callbacks connected to an
  * instance of {Gtk3::AccelGroup}.
  *

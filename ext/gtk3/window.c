@@ -15,6 +15,8 @@ static ID gtk3_id_toplevel;
 static ID gtk3_id_popup;
 
 /**
+ * Document-class: Gtk3::Window
+ *
  * {Gtk3::Window} is a toplevel window class which can contain other widgets
  * such as buttons and panes.
  *

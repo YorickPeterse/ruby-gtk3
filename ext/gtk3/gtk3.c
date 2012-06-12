@@ -1,6 +1,8 @@
 #include "gtk3.h"
 
 /**
+ * Document-module: Gtk3
+ *
  * Primary Gtk3 module.
  *
  * @since 2012-05-29

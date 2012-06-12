@@ -1,6 +1,8 @@
 #include "modifier_type.h"
 
 /**
+ * Document-module: Gtk3::ModifierType
+ *
  * {Gtk3::ModifierType} is a module that's used for storing various constants
  * related to the GTK modifier types.
  *

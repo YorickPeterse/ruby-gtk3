@@ -29,6 +29,8 @@ static ID gtk3_id_before;
 static ID gtk3_id_after;
 
 /**
+ * Document-class: Gtk3::Widget
+ *
  * {Gtk3::Widget} is a base class for all the widgets in the GTK+ toolkit.
  *
  * @since 2012-05-30

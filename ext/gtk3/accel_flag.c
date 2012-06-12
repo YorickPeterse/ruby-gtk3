@@ -1,6 +1,8 @@
 #include "accel_flag.h"
 
 /**
+ * Document-module: Gtk3::AccelFlag
+ *
  * {Gtk3::AccelFlag} is a module that's used for storing and retrieving GTK
  * accelerator flags.
  *

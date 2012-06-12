@@ -1,6 +1,8 @@
 #include "accel_group.h"
 
 /**
+ * Document-class: Gtk3::AccelGroup
+ *
  * {Gtk3::AccelGroup} is a class used for creating keyboard accelerators.
  *
  * @since 2012-06-07
