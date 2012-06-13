@@ -10,84 +10,6 @@
 VALUE gtk3_cAccelGroup;
 
 /**
- * ID for the `:lookup` symbol.
- *
- * @since 2012-06-09
- */
-static ID gtk3_id_lookup;
-
-/**
- * ID for the `:new` symbol.
- *
- * @since 2012-06-10
- */
-static ID gtk3_id_new;
-
-/* Helper methods, not exposed to Ruby code. */
-
-/**
- * Looks up an accelerator modifier and returns the value. If no modifier was
- * found `ArgumentError` is raised instead.
- *
- * @since  2012-06-10
- * @param  [VALUE] modifier The modifier to look up.
- * @raise  [ArgumentError] Raised when the specified modifier is invalid.
- * @return [VALUE]
- */
-static VALUE gtk3_accel_group_lookup_modifier(VALUE modifier)
-{
-    VALUE modifier_type = TYPE(modifier);
-
-    if ( modifier_type == T_STRING || modifier_type == T_SYMBOL )
-    {
-        modifier = rb_funcall(gtk3_mModifierType, gtk3_id_lookup, 1, modifier);
-    }
-    else
-    {
-        gtk3_check_number(modifier);
-    }
-
-    if ( NIL_P(modifier) )
-    {
-        rb_raise(rb_eArgError, "invalid accelerator modifier");
-    }
-
-    return modifier;
-}
-
-/**
- * Looks up an accelerator flag and returns the value. If no flag was
- * found `ArgumentError` is raised instead.
- *
- * @since  2012-06-10
- * @param  [VALUE] flag The modifier to look up.
- * @raise  [ArgumentError] Raised when the specified flag is invalid.
- * @return [VALUE]
- */
-static VALUE gtk3_accel_group_lookup_flag(VALUE flag)
-{
-    VALUE flag_type = TYPE(flag);
-
-    if ( flag_type == T_STRING || flag_type == T_SYMBOL )
-    {
-        flag = rb_funcall(gtk3_mAccelFlag, gtk3_id_lookup, 1, flag);
-    }
-    else
-    {
-        gtk3_check_number(flag);
-    }
-
-    if ( NIL_P(flag) )
-    {
-        rb_raise(rb_eArgError, "invalid accelerator flag");
-    }
-
-    return flag;
-}
-
-/* Class methods */
-
-/**
  * Creates a new instance of the class.
  *
  * @example
@@ -132,7 +54,7 @@ static VALUE gtk3_accel_group_accelerator_name(
     VALUE modifier
 )
 {
-    modifier = gtk3_accel_group_lookup_modifier(modifier);
+    modifier = gtk3_lookup_accelerator_modifier(modifier);
 
     return rb_str_new2(gtk_accelerator_name(NUM2INT(key), NUM2INT(modifier)));
 }
@@ -152,7 +74,7 @@ static VALUE gtk3_accel_group_accelerator_label(
     VALUE modifier
 )
 {
-    modifier = gtk3_accel_group_lookup_modifier(modifier);
+    modifier = gtk3_lookup_accelerator_modifier(modifier);
 
     return rb_str_new2(
         gtk_accelerator_get_label(NUM2INT(key), NUM2INT(modifier))
@@ -327,8 +249,8 @@ static VALUE gtk3_accel_group_connect(
 
     gtk3_check_number(key);
 
-    modifier     = gtk3_accel_group_lookup_modifier(modifier);
-    flag         = gtk3_accel_group_lookup_flag(flag);
+    modifier     = gtk3_lookup_accelerator_modifier(modifier);
+    flag         = gtk3_lookup_accelerator_flag(flag);
     key_guint      = NUM2INT(key);
     gdk_modifier = NUM2INT(modifier);
     gtk_flag     = NUM2INT(flag);
@@ -383,7 +305,7 @@ static VALUE gtk3_accel_group_connect_by_path(VALUE self, VALUE path)
 
     Data_Get_Struct(self, GtkAccelGroup, group);
 
-    path_gchar = g_intern_static_string(StringValuePtr(path));
+    path_gchar = StringValuePtr(path);
 
     /* Check if the specified path is valid. */
     gtk_accelerator_parse(path_gchar, &key, &modifier);
@@ -424,7 +346,7 @@ static VALUE gtk3_accel_group_disconnect_key(VALUE self, VALUE key, VALUE mod)
     gtk3_check_number(key);
 
     key_guint    = NUM2INT(key);
-    gdk_modifier = NUM2INT(gtk3_accel_group_lookup_modifier(mod));
+    gdk_modifier = NUM2INT(gtk3_lookup_accelerator_modifier(mod));
 
     Data_Get_Struct(self, GtkAccelGroup, group);
 
@@ -466,7 +388,7 @@ static VALUE gtk3_accel_group_query(VALUE self, VALUE key, VALUE mod)
 
     gtk3_check_number(key);
 
-    mod = gtk3_accel_group_lookup_modifier(mod);
+    mod = gtk3_lookup_accelerator_modifier(mod);
 
     Data_Get_Struct(self, GtkAccelGroup, group);
 
@@ -582,7 +504,4 @@ void Init_gtk3_accel_group()
     );
 
     rb_define_method(gtk3_cAccelGroup, "query", gtk3_accel_group_query, 2);
-
-    gtk3_id_lookup = rb_intern("lookup");
-    gtk3_id_new    = rb_intern("new");
 }

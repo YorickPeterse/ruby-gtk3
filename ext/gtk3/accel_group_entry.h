@@ -3,7 +3,10 @@
 
 #include "gtk3.h"
 
+extern ID gtk3_id_accelerator_name;
+
 extern VALUE gtk3_cAccelGroupEntry;
+
 extern void Init_gtk3_accel_group_entry();
 
 #endif

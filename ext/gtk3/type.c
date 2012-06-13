@@ -1,20 +1,6 @@
 #include "type.h"
 
 /**
- * ID for the `:class` symbol.
- *
- * @since 2012-06-05
- */
-static ID gtk3_id_class;
-
-/**
- * ID for the `:to_s` symbol.
- *
- * @since 2012-06-05
- */
-static ID gtk3_id_to_s;
-
-/**
  * Converts a `gboolean` to a Ruby boolean.
  *
  * @since  2012-06-05
@@ -110,15 +96,4 @@ char *gtk3_get_rbclass(VALUE object)
    object_class = rb_funcall(object_class, gtk3_id_to_s, 0);
 
    return StringValuePtr(object_class);
-}
-
-/**
- * Initializes the required variables.
- *
- * @since 2012-06-05
- */
-void Init_gtk3_type()
-{
-    gtk3_id_class = rb_intern("class");
-    gtk3_id_to_s  = rb_intern("to_s");
 }

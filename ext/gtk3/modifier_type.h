@@ -5,6 +5,7 @@
 #include <gdk/gdkkeysyms.h>
 
 extern VALUE gtk3_mModifierType;
+
 extern void Init_gtk3_modifier_type();
 
 #endif

@@ -3,6 +3,9 @@
 
 #include "gtk3.h"
 
+extern ID gtk3_id_before;
+extern ID gtk3_id_after;
+
 extern VALUE gtk3_cWidget;
 
 extern void Init_gtk3_widget();

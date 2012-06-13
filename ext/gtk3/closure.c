@@ -1,13 +1,6 @@
 #include "closure.h"
 
 /**
- * ID of the `:call` symbol.
- *
- * @since 2012-06-03
- */
-static ID gtk3_id_call;
-
-/**
  * Called whenever a closure is no longer valid. This function unsets the
  * contents of the RClosure struct and frees any allocated memory.
  *
@@ -82,14 +75,4 @@ RClosure *gtk3_closure_new(VALUE proc, VALUE object)
     rb_global_variable(&rclosure->proc);
 
     return rclosure;
-}
-
-/**
- * Initializes the required variables.
- *
- * @since 2012-06-03
- */
-void Init_gtk3_closure()
-{
-    gtk3_id_call = rb_intern("call");
 }

@@ -33,6 +33,4 @@ extern void gtk3_closure_marshal(
 
 extern RClosure *gtk3_closure_new(VALUE proc, VALUE object);
 
-extern void Init_gtk3_closure();
-
 #endif

@@ -1,46 +1,18 @@
 #include "lookup_constant.h"
 
 /**
- * ID of the `:class` symbol.
- *
- * @since 2012-06-09
- */
-static ID gtk3_id_class;
-
-/**
- * ID for the `:to_s` symbol.
- *
- * @since 2012-06-09
- */
-static ID gtk3_id_to_s;
-
-/**
- * ID for the `:upcase` symbol.
- *
- * @since 2012-06-09
- */
-static ID gtk3_id_upcase;
-
-/**
- * ID for the `:to_sym` symbol.
- *
- * @since 2012-06-09
- */
-static ID gtk3_id_to_sym;
-
-/**
  * ID for the `:const_defined?` symbol.
  *
- * @since 2012-06-09
+ * @since 2012-06-14
  */
-static ID gtk3_id_const_defined;
+ID gtk3_id_const_defined;
 
 /**
  * ID for the `:const_get` symbol.
  *
- * @since 2012-06-09
+ * @since 2012-06-14
  */
-static ID gtk3_id_const_get;
+ID gtk3_id_const_get;
 
 /**
  * Looks up a constant in a given class or module. If the given constant exists
@@ -86,10 +58,6 @@ VALUE gtk3_lookup_constant(VALUE search, VALUE name)
  */
 void Init_gtk3_lookup_constant()
 {
-    gtk3_id_class         = rb_intern("class");
-    gtk3_id_to_s          = rb_intern("to_s");
-    gtk3_id_upcase        = rb_intern("upcase");
-    gtk3_id_to_sym        = rb_intern("to_sym");
     gtk3_id_const_defined = rb_intern("const_defined?");
     gtk3_id_const_get     = rb_intern("const_get");
 }

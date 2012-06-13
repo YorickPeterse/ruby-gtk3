@@ -1,6 +1,20 @@
 #include "widget.h"
 
 /**
+ * ID for the `:before` symbol.
+ *
+ * @since 2012-06-14
+ */
+ID gtk3_id_before;
+
+/**
+ * ID for the `:after` symbol.
+ *
+ * @since 2012-06-14
+ */
+ID gtk3_id_after;
+
+/**
  * Document-class: Gtk3::Widget
  *
  * {Gtk3::Widget} is a base class for all the widgets in the GTK+ toolkit.
@@ -8,34 +22,6 @@
  * @since 2012-05-30
  */
 VALUE gtk3_cWidget;
-
-/**
- * ID for the `:to_s` symbol.
- *
- * @since 2012-06-03
- */
-static ID gtk3_id_to_s;
-
-/**
- * ID for the `:to_sym` symbol.
- *
- * @since 2012-06-04
- */
-static ID gtk3_id_to_sym;
-
-/**
- * ID for the `:before` symbol.
- *
- * @since 2012-06-03
- */
-static ID gtk3_id_before;
-
-/**
- * ID for the `:after` symbol.
- *
- * @since 2012-06-03
- */
-static ID gtk3_id_after;
 
 /**
  * Binds the specified block to the given event name.
@@ -610,8 +596,6 @@ void Init_gtk3_widget()
 
     rb_define_method(gtk3_cWidget, "unparent", gtk3_widget_unparent, 0);
 
-    gtk3_id_to_s   = rb_intern("to_s");
     gtk3_id_before = rb_intern("before");
     gtk3_id_after  = rb_intern("after");
-    gtk3_id_to_sym = rb_intern("to_sym");
 }

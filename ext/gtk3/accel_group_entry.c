@@ -1,6 +1,13 @@
 #include "accel_group_entry.h"
 
 /**
+ * ID for the `:accelerator_name` symbol.
+ *
+ * @since 2012-06-14
+ */
+ID gtk3_id_accelerator_name;
+
+/**
  * Document-class: Gtk3::AccelGroupEntry
  *
  * {Gtk3::AccelGroupEntry} is a class used for callbacks connected to an
@@ -9,13 +16,6 @@
  * @since 2012-06-10
  */
 VALUE gtk3_cAccelGroupEntry;
-
-/**
- * ID for the symbol `:accelerator_name`.
- *
- * @since 2012-06-10
- */
-static ID gtk3_id_accelerator_name;
 
 /**
  * Creates a new instance of the class and stores the accelerator key, callback
