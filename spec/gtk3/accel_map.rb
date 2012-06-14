@@ -23,4 +23,18 @@ describe 'Gtk3::AccelMap' do
     key.key.should      == 113
     key.modifier.should == Gtk3::ModifierType::CONTROL
   end
+
+  it 'Change an accelerator mapping' do
+    should.raise?(ArgumentError) { Gtk3::AccelMap.change_entry }
+    should.raise?(ArgumentError) { Gtk3::AccelMap.change_entry(1, 2, 3, 4, 5) }
+
+    Gtk3::AccelMap.add_entry('<Test>/Test', 113, :control)
+
+    Gtk3::AccelMap.change_entry('<Test>/Test', 112, :shift).should == true
+
+    key = Gtk3::AccelMap.lookup_entry('<Test>/Test')
+
+    key.key.should      == 112
+    key.modifier.should == Gtk3::ModifierType::SHIFT
+  end
 end
