@@ -3,12 +3,18 @@
 /**
  * Document-module: Gtk3::AccelMap
  *
+ * Accelerator maps are used for defining accelerators that can be changed
+ * during runtime.
+ *
  * @since 2012-06-12
  */
 VALUE gtk3_mAccelMap;
 
 /**
  * Registers a new accelerator.
+ *
+ * @example
+ *  Gtk3::AccelMap.add_entry('<Ruby>/Test', 113, :control)
  *
  * @since 2012-06-13
  * @param [String] path The accelerator path.
@@ -42,6 +48,14 @@ static VALUE gtk3_accel_map_add_entry(
  * Looks up an accelerator mapping. If the mapping was found an instance of
  * {Gtk3::AccelKey} is returned, otherwise `nil` is returned.
  *
+ * @example
+ *  Gtk3::AccelMap.add_entry('<Ruby>/Test', 113, :control)
+ *
+ *  accelerator = Gtk3::AccelMap.lookup_entry('<Ruby>/Test')
+ *
+ *  puts accelerator.key      # => 113
+ *  puts accelerator.modifier # => Gtk3::ModifierType::CONTROL
+ *
  * @since  2012-06-13
  * @param  [String] path The accelerator path to look up.
  * @return [Gtk3::AccelKey|NilClass]
@@ -74,6 +88,10 @@ static VALUE gtk3_accel_map_lookup_entry(VALUE class, VALUE path)
 
 /**
  * Changes an accelerator entry.
+ *
+ * @example
+ *  Gtk3::AccelMap.add_entry('<Ruby>/Test', 113, :control)
+ *  Gtk3::AccelMap.change_entry('<Ruby>/Test', 113, :shift) # => true
  *
  * @since 2012-06-14
  * @param [String] path The accelerator path to change.
