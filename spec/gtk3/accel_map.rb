@@ -121,4 +121,31 @@ describe 'Gtk3::AccelMap' do
     paths.include?('<Test>/Test').should   == true
     paths.include?('<Test>/Loaded').should == true
   end
+
+  it 'Lock and unlock an accelerator path' do
+    Gtk3::AccelMap.change_entry('<Test>/Test', 112, :shift)
+
+    entry = Gtk3::AccelMap.lookup_entry('<Test>/Test')
+
+    entry.key.should      == 112
+    entry.modifier.should == Gtk3::ModifierType::SHIFT
+
+    Gtk3::AccelMap.lock_path('<Test>/Test')
+
+    Gtk3::AccelMap.change_entry('<Test>/Test', 113, :control)
+
+    entry = Gtk3::AccelMap.lookup_entry('<Test>/Test')
+
+    entry.key.should      == 112
+    entry.modifier.should == Gtk3::ModifierType::SHIFT
+
+    Gtk3::AccelMap.unlock_path('<Test>/Test')
+
+    Gtk3::AccelMap.change_entry('<Test>/Test', 113, :control)
+
+    entry = Gtk3::AccelMap.lookup_entry('<Test>/Test')
+
+    entry.key.should      == 113
+    entry.modifier.should == Gtk3::ModifierType::CONTROL
+  end
 end

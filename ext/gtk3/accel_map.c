@@ -259,6 +259,37 @@ static VALUE gtk3_accel_map_add_filter(VALUE self, VALUE filter)
 }
 
 /**
+ * Locks the specified accelerator path, preventing it from being changed until
+ * it's unlocked.
+ *
+ * @since 2012-06-17
+ * @param [String] path The accelerator path to lock.
+ */
+static VALUE gtk3_accel_map_lock_path(VALUE self, VALUE path)
+{
+    Check_Type(path, T_STRING);
+
+    gtk_accel_map_lock_path(StringValuePtr(path));
+
+    return Qnil;
+}
+
+/**
+ * Unlocks the specified accelerator path.
+ *
+ * @since 2012-06-17
+ * @param [String] path The accelerator path to unlock.
+ */
+static VALUE gtk3_accel_map_unlock_path(VALUE self, VALUE path)
+{
+    Check_Type(path, T_STRING);
+
+    gtk_accel_map_unlock_path(StringValuePtr(path));
+
+    return Qnil;
+}
+
+/**
  * Initializes the module.
  *
  * @since 2012-06-12
@@ -309,6 +340,20 @@ void Init_gtk3_accel_map()
         gtk3_mAccelMap,
         "add_filter",
         gtk3_accel_map_add_filter,
+        1
+    );
+
+    rb_define_singleton_method(
+        gtk3_mAccelMap,
+        "lock_path",
+        gtk3_accel_map_lock_path,
+        1
+    );
+
+    rb_define_singleton_method(
+        gtk3_mAccelMap,
+        "unlock_path",
+        gtk3_accel_map_unlock_path,
         1
     );
 }
