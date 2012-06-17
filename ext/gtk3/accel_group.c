@@ -279,11 +279,11 @@ static VALUE gtk3_accel_group_connect(
  * Connects an accelerator by the key path.
  *
  * @example
- *  Gtk3::AccelMap.add_entry('<Control>q', 113, :control)
+ *  Gtk3::AccelMap.add_entry('<Example>/Test', 113, :control)
  *
  *  group = Gtk3::AccelGroup.new
  *
- *  group.connect('<Control>q') do
+ *  group.connect('<Example>/Test') do
  *    puts 'You pressed <Control>q'
  *  end
  *
@@ -296,8 +296,6 @@ static VALUE gtk3_accel_group_connect_by_path(VALUE self, VALUE path)
     RClosure *closure;
     GtkAccelGroup *group;
     const gchar *path_gchar;
-    guint key;
-    GdkModifierType modifier;
 
     rb_need_block();
 
@@ -306,14 +304,6 @@ static VALUE gtk3_accel_group_connect_by_path(VALUE self, VALUE path)
     Data_Get_Struct(self, GtkAccelGroup, group);
 
     path_gchar = StringValuePtr(path);
-
-    /* Check if the specified path is valid. */
-    gtk_accelerator_parse(path_gchar, &key, &modifier);
-
-    if ( !key || !modifier )
-    {
-        rb_raise(rb_eArgError, "invalid accelerator path");
-    }
 
     closure = gtk3_closure_new(rb_block_proc(), self);
 

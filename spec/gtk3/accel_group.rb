@@ -87,10 +87,14 @@ describe 'Gtk3::AccelGroup' do
   it 'Install an accelerator using a key path' do
     group = Gtk3::AccelGroup.new
 
-    should.raise(ArgumentError) { group.connect_by_path('<Control>@') {} } \
-      .message.should == 'invalid accelerator path'
+    group.connect_by_path('<AccelGroup>/Test') {}
 
-    should.flunk 'no code is being tested for valid accelerator paths'
+    group.query(113, :control).length.should == 0
+
+    Gtk3::AccelMap.add_entry('<AccelGroup>/Test', 113, :control)
+    group.connect_by_path('<AccelGroup>/Test') {}
+
+    group.query(113, :control).length.should == 2
   end
 
   it 'Query an accelerator group' do
