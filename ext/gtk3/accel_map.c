@@ -10,6 +10,39 @@
  */
 VALUE gtk3_mAccelMap;
 
+/* Helper methods */
+
+/**
+ * Function that is called for each accelerator map entry when using
+ * {Gtk3::AccelMap.foreach}.
+ *
+ * @since 2012-06-16
+ * @param [gpointer] data The proc to call.
+ * @param [const gchar *] path The accelerator path of the current entry.
+ * @param [guint] key The accelerator key of the current entry.
+ * @param [GdkModifierType] modifier The modifier type of the current entry.
+ * @param [gboolean] changed When set to TRUE the entry has been changed uring
+ *  runtime.
+ */
+void gtk3_accel_map_foreach_callback(
+    gpointer data,
+    const gchar *path,
+    guint key,
+    GdkModifierType modifier,
+    gboolean changed
+)
+{
+    VALUE proc       = (VALUE) data;
+    VALUE rb_path    = rb_str_new2(path);
+    VALUE rb_key     = INT2NUM(key);
+    VALUE rb_mod     = INT2NUM(modifier);
+    VALUE rb_changed = gtk3_gboolean_to_rboolean(changed);
+
+    rb_funcall(proc, gtk3_id_call, 4, rb_path, rb_key, rb_mod, rb_changed);
+}
+
+/* Class methods */
+
 /**
  * Registers a new accelerator.
  *
@@ -140,6 +173,92 @@ static VALUE gtk3_accel_map_change_entry(int argc, VALUE *argv, VALUE self)
 }
 
 /**
+ * Saves the current accelerator speifications in a file. Once saved these
+ * specifications can be loaded using {Gtk3::AccelMap.load}.
+ *
+ * @since 2012-06-16
+ * @param [String] path The file path to use for saving the file.
+ */
+static VALUE gtk3_accel_map_save(VALUE self, VALUE path)
+{
+    Check_Type(path, T_STRING);
+
+    gtk_accel_map_save(StringValuePtr(path));
+
+    return Qnil;
+}
+
+/**
+ * Loads a set of accelerator specifications that were saved using
+ * {Gtk3::AccelMap.save}.
+ *
+ * @since 2012-06-16
+ * @param [String] path The file path of the file to load.
+ */
+static VALUE gtk3_accel_map_load(VALUE self, VALUE path)
+{
+    Check_Type(path, T_STRING);
+
+    gtk_accel_map_load(StringValuePtr(path));
+
+    return Qnil;
+}
+
+/**
+ * Loops through the entries in the accelerator map and executes the specified
+ * block for each unfiltered entry. See {Gtk3::AccelMap.add_filter} for adding
+ * filters.
+ *
+ * @since 2012-06-16
+ */
+static VALUE gtk3_accel_map_foreach(VALUE self)
+{
+    gpointer proc;
+
+    rb_need_block();
+
+    proc = (gpointer) rb_block_proc();
+
+    gtk_accel_map_foreach(proc, gtk3_accel_map_foreach_callback);
+
+    return Qnil;
+}
+
+/**
+ * Loops through the entries in the accelerator map and executes the specified
+ * block for each entry regardless of the added filters.
+ *
+ * @since 2012-06-16
+ */
+static VALUE gtk3_accel_map_foreach_unfiltered(VALUE self)
+{
+    gpointer proc;
+
+    rb_need_block();
+
+    proc = (gpointer) rb_block_proc();
+
+    gtk_accel_map_foreach_unfiltered(proc, gtk3_accel_map_foreach_callback);
+
+    return Qnil;
+}
+
+/**
+ * Adds a filter to the global list of accelerator path filters.
+ *
+ * @since 2012-06-16
+ * @param [String] filter The filter to add.
+ */
+static VALUE gtk3_accel_map_add_filter(VALUE self, VALUE filter)
+{
+    Check_Type(filter, T_STRING);
+
+    gtk_accel_map_add_filter(StringValuePtr(filter));
+
+    return Qnil;
+}
+
+/**
  * Initializes the module.
  *
  * @since 2012-06-12
@@ -167,5 +286,29 @@ void Init_gtk3_accel_map()
         "change_entry",
         gtk3_accel_map_change_entry,
         -1
+    );
+
+    rb_define_singleton_method(gtk3_mAccelMap, "save", gtk3_accel_map_save, 1);
+    rb_define_singleton_method(gtk3_mAccelMap, "load", gtk3_accel_map_load, 1);
+
+    rb_define_singleton_method(
+        gtk3_mAccelMap,
+        "foreach",
+        gtk3_accel_map_foreach,
+        0
+    );
+
+    rb_define_singleton_method(
+        gtk3_mAccelMap,
+        "foreach_unfiltered",
+        gtk3_accel_map_foreach_unfiltered,
+        0
+    );
+
+    rb_define_singleton_method(
+        gtk3_mAccelMap,
+        "add_filter",
+        gtk3_accel_map_add_filter,
+        1
     );
 }
