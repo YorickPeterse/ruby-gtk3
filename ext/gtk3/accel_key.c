@@ -3,6 +3,23 @@
 /**
  * Document-class: Gtk3::AccelKey
  *
+ * Class that represents a single accelerator key, its modifier and flags. This
+ * class is used by methods such as {Gtk3::AccelMap.lookup\_entry}, it's not
+ * very useful on its own as it's merely a data container.
+ *
+ * @!attribute [r] key
+ *  The numeric value of the accelerator key.
+ *  @since  2012-06-17
+ *  @return [Fixnum|Bignum]
+ * @!attribute [r] modifier
+ *  The accelerator modifier.
+ *  @since  2012-06-17
+ *  @return [Fixnum|Bignum]
+ * @!attribute [r] flags
+ *  The accelerator flags.
+ *  @since  2012-06-17
+ *  @return [Fixnum|Bignum]
+ *
  * @since 2012-06-14
  */
 VALUE gtk3_cAccelKey;

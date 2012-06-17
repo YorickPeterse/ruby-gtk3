@@ -47,6 +47,7 @@ ID gtk3_id_to_sym;
  *
  * Primary Gtk3 module.
  *
+ * @todo  Properly document this module.
  * @since 2012-05-29
  */
 VALUE gtk3_mGtk3;

@@ -3,7 +3,13 @@
 /**
  * Document-class: Gtk3::AccelGroup
  *
- * {Gtk3::AccelGroup} is a class used for creating keyboard accelerators.
+ * {Gtk3::AccelGroup} is a class used for creating keyboard accelerators. These
+ * accelerators are typically attached to a toplevel widget such as
+ * {Gtk3::Window}.
+ *
+ * Note that accelerators are different from mnemonics. Accelerators are
+ * shortcuts for activating menu items while mnemonics are shortcuts for GUI
+ * elements such as buttons or text fields.
  *
  * @since 2012-06-07
  */

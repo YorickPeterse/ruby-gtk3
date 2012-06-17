@@ -43,7 +43,27 @@ void Init_gtk3_accel_flag()
         1
     );
 
+    /**
+     * Flag that indicates if an accelerator should be displayed in an
+     * accelerator label. The C equilivant of this flag is `GTK_ACCEL_VISIBLE`.
+     *
+     * @since 2012-06-17
+     */
     rb_define_const(gtk3_mAccelFlag, "VISIBLE", INT2NUM(GTK_ACCEL_VISIBLE));
+
+    /**
+     * Flag that indicates whether or not an accelerator can be removed. The C
+     * equilivant of this flag is `GTK_ACCEL_LOCKED`.
+     *
+     * @since 2012-06-17
+     */
     rb_define_const(gtk3_mAccelFlag, "LOCKED", INT2NUM(GTK_ACCEL_LOCKED));
+
+    /**
+     * Flag for the accelerator mask. The C equilivant of this flag is
+     * `GTK_ACCEL_MASK`.
+     *
+     * @since 2012-06-17
+     */
     rb_define_const(gtk3_mAccelFlag, "MASK", INT2NUM(GTK_ACCEL_MASK));
 }

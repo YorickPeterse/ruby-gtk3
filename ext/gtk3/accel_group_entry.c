@@ -10,8 +10,36 @@ ID gtk3_id_accelerator_name;
 /**
  * Document-class: Gtk3::AccelGroupEntry
  *
- * {Gtk3::AccelGroupEntry} is a class used for callbacks connected to an
- * instance of {Gtk3::AccelGroup}.
+ * The {Gtk3::AccelGroupEntry} class is used for representing entries in an
+ * accelerator group. Each entry contains details about the accelerator key,
+ * modifier, flags, callback and path.
+ *
+ * Using this class on its own doesn't make a whole lot of sense since it
+ * mostly acts as a data container. Internally it's used by methods such as
+ * {Gtk3::AccelGroup#query}.
+ *
+ * @!attribute [r] key
+ *   Numeric value of the key the entry is associated with.
+ *   @since  2012-06-17
+ *   @return [Fixnum|Bignum]
+ * @!attribute [r] modifier
+ *   The modifier of the accelerator entry.
+ *   @since  2012-06-17
+ *   @return [Fixnum|Bignum]
+ * @!attribute [r] flags
+ *   The accelerator flags of the entry.
+ *   @since  2012-06-17
+ *   @return [Fixnum|Bignum]
+ * @!attribute [r] path
+ *   String that represents the accelerator path. For example, if the key is
+ *   set to "q" (numeric value of 113) and the modifier to "control" then the
+ *   path will be "<Primary>q" ("Primary" is "Control" in GTK).
+ *   @since  2012-06-17
+ *   @return [String]
+ * @!attribute [r] callback
+ *   The proc to call when activating the entry.
+ *   @since  2012-06-17
+ *   @return [Proc]
  *
  * @since 2012-06-10
  */

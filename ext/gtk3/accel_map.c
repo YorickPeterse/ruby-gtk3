@@ -4,7 +4,53 @@
  * Document-module: Gtk3::AccelMap
  *
  * Accelerator maps are used for defining accelerators that can be changed
- * during runtime.
+ * during runtime. Each accelerator is uniquely defined by the following:
+ *
+ * * an accelerator key
+ * * an accelerator modifier
+ * * an accelerator path
+ *
+ * The key is a numeric value that represents a keyboard key. For example, 112
+ * represents the letter "q".
+ *
+ * The modifier is a special key, such as shift or control, that has to be
+ * pressed in combination with the accelerator key.
+ *
+ * The accelerator path is a custom string that can be seen as a unique name
+ * for the accelerator. Each path must be in the following format:
+ *
+ *     <IDENTIFIER>/Category 1/Category 2/etc
+ *
+ * "IDENTIFIER" is a unique application specific identifier for the
+ * accelerator. Examples are "Gimp-Image" and "Gnumeric-Settings". An example
+ * of a valid accelerator path is the following:
+ *
+ *     <Gimp-Toolbox>/File/Dialogs/Save
+ *
+ * ## Adding And Modifying Accelerators
+ *
+ * New accelerators can be created using {Gtk3::AccelMap.add\_entry} while
+ * existing accelerators can be modifier using {Gtk3::AccelMap.edit\_entry}.
+ * The GTK C API provides no sane way of checking if either creating or editing
+ * an accelerator actually worked. Because of this it's recommended to look up
+ * an accelerator using {Gtk3::AccelMap.lookup\_entry} to verify if changes
+ * have been made successfully.
+ *
+ * The usage of {Gtk3::AccelMap.add\_entry} and {Gtk3::AccelMap.edit\_entry} is
+ * the same: you specify a path, a key and a modifier:
+ *
+ *     # Creating an entry. Specifying :control is the same as specifying
+ *     # Gtk3::ModifierType::CONTROL.
+ *     Gtk3::AccelMap.add_entry('<Ruby-Gtk3>/Test', 112, :control)
+ *
+ *     # Edit it to change the modifier.
+ *     Gtk3::AccelMap.edit_entry('<Ruby-Gtk3>/Test', 112, :shift)
+ *
+ * ## Saving And Loading Accelerator Maps
+ *
+ * The GTK API allows you to save and load accelerator specifications. Saving a
+ * set of specifications is done using {Gtk3::AccelMap.save} while loading such
+ * a saved file can be done using {Gtk3::AccelMap.load}.
  *
  * @since 2012-06-12
  */
@@ -206,7 +252,7 @@ static VALUE gtk3_accel_map_load(VALUE self, VALUE path)
 
 /**
  * Loops through the entries in the accelerator map and executes the specified
- * block for each unfiltered entry. See {Gtk3::AccelMap.add_filter} for adding
+ * block for each unfiltered entry. See {Gtk3::AccelMap.add\_filter} for adding
  * filters.
  *
  * @since 2012-06-16
