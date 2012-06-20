@@ -49,6 +49,12 @@ describe 'Gtk3::AccelGroup' do
     group.locked?.should == false
   end
 
+  it 'Get the modifier mask of an accelerator group' do
+    group = Gtk3::AccelGroup.new
+
+    group.modifier_mask.should == Gtk3::AccelGroup.default_modifier
+  end
+
   it 'Installing an accelerator requires a block' do
     group = Gtk3::AccelGroup.new
     error = should.raise?(LocalJumpError) do

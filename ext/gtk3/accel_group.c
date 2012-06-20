@@ -213,6 +213,21 @@ static VALUE gtk3_accel_group_get_locked(VALUE self)
 }
 
 /**
+ * Returns the modifier mask of the accelerator group.
+ *
+ * @since  2012-06-20
+ * @return [Fixnum|Bignum]
+ */
+static VALUE gtk3_accel_group_get_modifier_mask(VALUE self)
+{
+    GtkAccelGroup *group;
+
+    Data_Get_Struct(self, GtkAccelGroup, group);
+
+    return INT2NUM(gtk_accel_group_get_modifier_mask(group));
+}
+
+/**
  * Installs an accelerator in the group.
  *
  * @example Using constants when connecting a callback.
@@ -475,6 +490,13 @@ void Init_gtk3_accel_group()
         gtk3_cAccelGroup,
         "locked?",
         gtk3_accel_group_get_locked,
+        0
+    );
+
+    rb_define_method(
+        gtk3_cAccelGroup,
+        "modifier_mask",
+        gtk3_accel_group_get_modifier_mask,
         0
     );
 
