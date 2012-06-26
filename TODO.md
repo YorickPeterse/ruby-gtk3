@@ -14,4 +14,6 @@
   parsing the header file that defines all `GDK_KEY_*` constants and then
   generating the required code to define these constants as Ruby constants.
   Since these keys don't always change I think it's best to do this in a Rake
-  task and keep track of the resulting file in Git.
+  task and keep track of the resulting file in Git. A way of working around
+  this would be to allow strings and call `#ord()` on these strings to convert
+  them to integers.
