@@ -47,10 +47,10 @@ static VALUE gtk3_accel_group_new(VALUE class)
  * instead.
  *
  * @example
- *  Gtk3::AccelGroup.accelerator_name(113, :shift) => "<Shift>q"
+ *  Gtk3::AccelGroup.accelerator_name(:q, :shift) => "<Shift>q"
  *
  * @since  2012-06-10
- * @param  [Fixnum|Bignum] key The accelerator key.
+ * @param  [Fixnum|Bignum|String|Symbol] key The accelerator key.
  * @param  [Fixnum|Bignum|String|Symbol] modifier The accelerator modifier.
  * @return [String]
  */
@@ -60,6 +60,7 @@ static VALUE gtk3_accel_group_accelerator_name(
     VALUE modifier
 )
 {
+    key      = gtk3_lookup_accelerator_key(key);
     modifier = gtk3_lookup_accelerator_modifier(modifier);
 
     return rb_str_new2(gtk_accelerator_name(NUM2INT(key), NUM2INT(modifier)));
@@ -70,7 +71,7 @@ static VALUE gtk3_accel_group_accelerator_name(
  * key and modifier. If no label is found an empty string is returned.
  *
  * @since  2012-06-10
- * @param  [Fixnum|Bignum] key The accelerator key.
+ * @param  [Fixnum|Bignum|String|Symbol] key The accelerator key.
  * @param  [Fixnum|Bignum|String|Symbol] modifier The accelerator modifier.
  * @return [String]
  */
@@ -80,6 +81,7 @@ static VALUE gtk3_accel_group_accelerator_label(
     VALUE modifier
 )
 {
+    key      = gtk3_lookup_accelerator_key(key);
     modifier = gtk3_lookup_accelerator_modifier(modifier);
 
     return rb_str_new2(
@@ -233,19 +235,20 @@ static VALUE gtk3_accel_group_get_modifier_mask(VALUE self)
  * @example Using constants when connecting a callback.
  *  group = Gtk3::AccelGroup.new
  *
- *  group.connect(113, Gtk3::ModifierType::CONTROL, Gtk3::AccelFlag::VISIBLE) do
+ *  group.connect(:q, Gtk3::ModifierType::CONTROL, Gtk3::AccelFlag::VISIBLE) do
  *    puts 'You pressed <Control>q`
  *  end
  *
  * @example Using symbols when connecting a callback.
  *  group = Gtk3::AccelGroup.new
  *
- *  group.connect(113, :control, :visible) do
+ *  group.connect(:q, :control, :visible) do
  *    puts 'You pressed <Control>q'
  *  end
  *
  * @since 2012-06-08
- * @param [Fixnum|Bignum] key A number of the key to bind the accelerator to.
+ * @param [Fixnum|Bignum|String|Symbol] key A number of the key to bind the
+ *  accelerator to.
  * @param [Fixnum|Bignum|String|Symbol] modifier A number representing the
  *  modifier to use *or* a string or symbol representing the name. For example,
  *  using `:control` is the same as {Gtk3::ModifierType::CONTROL}.
@@ -268,11 +271,10 @@ static VALUE gtk3_accel_group_connect(
 
     rb_need_block();
 
-    gtk3_check_number(key);
-
+    key          = gtk3_lookup_accelerator_key(key);
     modifier     = gtk3_lookup_accelerator_modifier(modifier);
     flag         = gtk3_lookup_accelerator_flag(flag);
-    key_guint      = NUM2INT(key);
+    key_guint    = NUM2INT(key);
     gdk_modifier = NUM2INT(modifier);
     gtk_flag     = NUM2INT(flag);
 
@@ -340,12 +342,12 @@ static VALUE gtk3_accel_group_connect_by_path(VALUE self, VALUE path)
  * @example
  *  group = Gtk3::AccelGroup.new
  *
- *  group.connect(113, :control, :visible)
- *  group.disconnect_key(113, :control) # => true
+ *  group.connect(:q, :control, :visible)
+ *  group.disconnect_key(:q, :control) # => true
  *
  * @since 2012-06-09
- * @param [Fixnum|Bignum] key The key number to use for disconnecting a
- *  callback.
+ * @param [Fixnum|Bignum|String|Symbol] key The key number to use for
+ *  disconnecting a callback.
  * @param [String|Symbol|Fixnum|Bignum] mod The key modifier.
  */
 static VALUE gtk3_accel_group_disconnect_key(VALUE self, VALUE key, VALUE mod)
@@ -354,9 +356,7 @@ static VALUE gtk3_accel_group_disconnect_key(VALUE self, VALUE key, VALUE mod)
     GdkModifierType gdk_modifier;
     GtkAccelGroup *group;
 
-    gtk3_check_number(key);
-
-    key_guint    = NUM2INT(key);
+    key_guint    = NUM2INT(gtk3_lookup_accelerator_key(key));
     gdk_modifier = NUM2INT(gtk3_lookup_accelerator_modifier(mod));
 
     Data_Get_Struct(self, GtkAccelGroup, group);
@@ -373,11 +373,11 @@ static VALUE gtk3_accel_group_disconnect_key(VALUE self, VALUE key, VALUE mod)
  * @example
  *  group = Gtk3::AccelGroup.new
  *
- *  group.connect(113, :control, :visible) {}
- *  group.query(113, :control) => [#<Gtk3::AccelGroupEntry ...>]
+ *  group.connect(:q, :control, :visible) {}
+ *  group.query(:q, :control) => [#<Gtk3::AccelGroupEntry ...>]
  *
  * @since 2012-06-10
- * @param [Fixnum|Bignum] key The key number to query.
+ * @param [Fixnum|Bignum|String|Symbol] key The key number to query.
  * @param [Fixnum|Bignum|String|Symbol] mod The modifier to query.
  */
 static VALUE gtk3_accel_group_query(VALUE self, VALUE key, VALUE mod)
@@ -397,8 +397,7 @@ static VALUE gtk3_accel_group_query(VALUE self, VALUE key, VALUE mod)
     GtkAccelKey entry_key;
     RClosure *entry_closure;
 
-    gtk3_check_number(key);
-
+    key = gtk3_lookup_accelerator_key(key);
     mod = gtk3_lookup_accelerator_modifier(mod);
 
     Data_Get_Struct(self, GtkAccelGroup, group);

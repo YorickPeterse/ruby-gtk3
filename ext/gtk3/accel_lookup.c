@@ -8,6 +8,44 @@
 ID gtk3_id_lookup;
 
 /**
+ * ID for the `:ord` symbol.
+ *
+ * @since 2012-06-26
+ */
+ID gtk3_id_ord;
+
+/**
+ * Looks up an accelerator key. Fout types can be specified: Fixnum, Bignum
+ * String and Symbol. In the case of the first two types the numeric values
+ * will be used directly.
+ *
+ * When a String or Symbol object is specified the method `#ord()` is called on
+ * the object to retrieve the ordinal value of the string.
+ *
+ * The return value is a Fixnum or Bignum stored in a VALUE object.
+ *
+ * @since  2012-06-26
+ * @param  [VALUE] key The key as a Ruby VALUE object.
+ * @return [VALUE]
+ */
+VALUE gtk3_lookup_accelerator_key(VALUE key)
+{
+    VALUE key_type = TYPE(key);
+
+    if ( key_type == T_STRING || key_type == T_SYMBOL )
+    {
+        key = rb_funcall(key, gtk3_id_to_s, 0);
+        key = rb_funcall(key, gtk3_id_ord, 0);
+    }
+    else
+    {
+        gtk3_check_number(key);
+    }
+
+    return key;
+}
+
+/**
  * Looks up an accelerator modifier and returns the value. If no modifier was
  * found `ArgumentError` is raised instead.
  *
@@ -75,4 +113,5 @@ VALUE gtk3_lookup_accelerator_flag(VALUE flag)
 void Init_gtk3_accel_lookup()
 {
     gtk3_id_lookup = rb_intern("lookup");
+    gtk3_id_ord    = rb_intern("ord");
 }

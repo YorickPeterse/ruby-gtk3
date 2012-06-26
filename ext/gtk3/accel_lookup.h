@@ -5,6 +5,7 @@
 
 extern ID gtk3_id_lookup;
 
+extern VALUE gtk3_lookup_accelerator_key(VALUE key);
 extern VALUE gtk3_lookup_accelerator_modifier(VALUE modifier);
 extern VALUE gtk3_lookup_accelerator_flag(VALUE flag);
 
