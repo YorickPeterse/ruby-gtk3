@@ -20,6 +20,25 @@ VALUE gtk3_gboolean_to_rboolean(gboolean boolean)
 }
 
 /**
+ * Converts a Ruby boolean to a GTK boolean.
+ *
+ * @since  2012-06-30
+ * @param  [VALUE] rbool The Ruby boolean to convert.
+ * @return [gboolean]
+ */
+VALUE gtk3_rboolean_to_gboolean(VALUE rbool)
+{
+    if ( rbool == Qtrue )
+    {
+        return TRUE;
+    }
+    else
+    {
+        return FALSE;
+    }
+}
+
+/**
  * Converts a Ruby value to a GValue.
  *
  * TODO: currently the amount of types this function can handle is rather

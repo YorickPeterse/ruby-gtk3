@@ -10,4 +10,16 @@ describe 'Gtk3::Window' do
 
     window.title.should == 'My Window'
   end
+
+  it 'Sets whether the window can be resized by the user' do
+    window = Gtk3::Window.new
+
+    window.resizable = true
+
+    window.resizable?.should == true
+
+    window.resizable = false
+
+    window.resizable?.should == false
+  end
 end

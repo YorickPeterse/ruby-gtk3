@@ -148,6 +148,48 @@ static VALUE gtk3_window_set_title(VALUE self, VALUE title)
 }
 
 /**
+ * Sets whether the user can resize the window.
+ *
+ * @since 2012-06-30
+ * @param [TrueClass|FalseClass] resize Boolean that indicates whether the
+ *  window can be resized.
+ */
+static VALUE gtk3_window_set_resizable(VALUE self, VALUE resize)
+{
+    GtkWindow *window;
+
+    if ( resize != Qtrue && resize != Qfalse )
+    {
+        rb_raise(
+            rb_eTypeError,
+            "expected a TrueClass or FalseClass but got %s instead",
+            gtk3_get_rbclass(resize)
+        );
+    }
+
+    Data_Get_Struct(self, GtkWindow, window);
+
+    gtk_window_set_resizable(window, gtk3_rboolean_to_gboolean(resize));
+
+    return Qnil;
+}
+
+/**
+ * Returns whether the window can be resized by the user.
+ *
+ * @since  2012-06-30
+ * @return [TrueClass|FalseClass]
+ */
+static VALUE gtk3_window_get_resizable(VALUE self)
+{
+    GtkWindow *window;
+
+    Data_Get_Struct(self, GtkWindow, window);
+
+    return gtk3_gboolean_to_rboolean(gtk_window_get_resizable(window));
+}
+
+/**
  * Sets up the {Gtk3::Window} class.
  *
  * @since 2012-05-29
@@ -160,6 +202,9 @@ void Init_gtk3_window()
 
     rb_define_method(gtk3_cWindow, "title", gtk3_window_get_title, 0);
     rb_define_method(gtk3_cWindow, "title=", gtk3_window_set_title, 1);
+
+    rb_define_method(gtk3_cWindow, "resizable=", gtk3_window_set_resizable, 1);
+    rb_define_method(gtk3_cWindow, "resizable?", gtk3_window_get_resizable, 0);
 
     gtk3_id_toplevel = rb_intern("toplevel");
     gtk3_id_popup    = rb_intern("popup");
