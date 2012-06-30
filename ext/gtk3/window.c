@@ -98,6 +98,56 @@ static VALUE gtk3_window_new(int argc, VALUE *argv, VALUE class)
 }
 
 /**
+ * Returns the title of a window.
+ *
+ * @example
+ *  window       = Gtk3::Window.new
+ *  window.title = 'Test'
+ *
+ *  window.title # => "Test"
+ *
+ * @since  2012-06-30
+ * @return [String]
+ */
+static VALUE gtk3_window_get_title(VALUE self)
+{
+    const gchar *title;
+    GtkWindow *window;
+
+    Data_Get_Struct(self, GtkWindow, window);
+
+    title = gtk_window_get_title(window);
+
+    if ( title != NULL )
+    {
+        return rb_str_new2(title);
+    }
+    else
+    {
+        return Qnil;
+    }
+}
+
+/**
+ * Sets the title of a window.
+ *
+ * @since 2012-06-30
+ * @param [String] title The title of the window.
+ */
+static VALUE gtk3_window_set_title(VALUE self, VALUE title)
+{
+    GtkWindow *window;
+
+    Check_Type(title, T_STRING);
+
+    Data_Get_Struct(self, GtkWindow, window);
+
+    gtk_window_set_title(window, StringValuePtr(title));
+
+    return Qnil;
+}
+
+/**
  * Sets up the {Gtk3::Window} class.
  *
  * @since 2012-05-29
@@ -107,6 +157,9 @@ void Init_gtk3_window()
     gtk3_cWindow = rb_define_class_under(gtk3_mGtk3, "Window", gtk3_cWidget);
 
     rb_define_singleton_method(gtk3_cWindow, "new", gtk3_window_new, -1);
+
+    rb_define_method(gtk3_cWindow, "title", gtk3_window_get_title, 0);
+    rb_define_method(gtk3_cWindow, "title=", gtk3_window_set_title, 1);
 
     gtk3_id_toplevel = rb_intern("toplevel");
     gtk3_id_popup    = rb_intern("popup");
