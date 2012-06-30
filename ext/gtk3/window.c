@@ -190,6 +190,76 @@ static VALUE gtk3_window_get_resizable(VALUE self)
 }
 
 /**
+ * Adds a new accelerator group to the window.
+ *
+ * @example
+ *  window = Gtk3::Window.new
+ *  group  = Gtk3::AccelGroup.new
+ *
+ *  window.add_accel_group(group)
+ *
+ * @since 2012-06-30
+ * @param [Gtk3::AccelGroup] group The accelerator group to add.
+ */
+static VALUE gtk3_window_add_accel_group(VALUE self, VALUE group)
+{
+    GtkWindow *window;
+    GtkAccelGroup *accel_group;
+    char *group_type = gtk3_get_rbclass(group);
+
+    if ( strcmp(group_type, "Gtk3::AccelGroup") )
+    {
+        rb_raise(
+            rb_eTypeError,
+            "wrong argument type %s (expected Gtk3::AccelGroup)",
+            group_type
+        );
+    }
+
+    Data_Get_Struct(self, GtkWindow, window);
+    Data_Get_Struct(group, GtkAccelGroup, accel_group);
+
+    gtk_window_add_accel_group(window, accel_group);
+
+    return Qnil;
+}
+
+/**
+ * Removes an accelerator group from the window.
+ *
+ * @example
+ *  window = Gtk3::Window.new
+ *  group  = Gtk3::AccelGroup.new
+ *
+ *  window.remove_accel_group(group)
+ *
+ * @since 2012-06-30
+ * @param [Gtk3::AccelGroup] group The group to remove.
+ */
+static VALUE gtk3_window_remove_accel_group(VALUE self, VALUE group)
+{
+    GtkWindow *window;
+    GtkAccelGroup *accel_group;
+    char *group_type = gtk3_get_rbclass(group);
+
+    if ( strcmp(group_type, "Gtk3::AccelGroup") )
+    {
+        rb_raise(
+            rb_eTypeError,
+            "wrong argument type %s (expected Gtk3::AccelGroup)",
+            group_type
+        );
+    }
+
+    Data_Get_Struct(self, GtkWindow, window);
+    Data_Get_Struct(group, GtkAccelGroup, accel_group);
+
+    gtk_window_remove_accel_group(window, accel_group);
+
+    return Qnil;
+}
+
+/**
  * Sets up the {Gtk3::Window} class.
  *
  * @since 2012-05-29
@@ -205,6 +275,20 @@ void Init_gtk3_window()
 
     rb_define_method(gtk3_cWindow, "resizable=", gtk3_window_set_resizable, 1);
     rb_define_method(gtk3_cWindow, "resizable?", gtk3_window_get_resizable, 0);
+
+    rb_define_method(
+        gtk3_cWindow,
+        "add_accel_group",
+        gtk3_window_add_accel_group,
+        1
+    );
+
+    rb_define_method(
+        gtk3_cWindow,
+        "remove_accel_group",
+        gtk3_window_remove_accel_group,
+        1
+    );
 
     gtk3_id_toplevel = rb_intern("toplevel");
     gtk3_id_popup    = rb_intern("popup");

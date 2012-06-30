@@ -22,4 +22,20 @@ describe 'Gtk3::Window' do
 
     window.resizable?.should == false
   end
+
+  # TODO: find a proper way to test if this actually works.
+  it 'Add and remove an accelerator group to a window' do
+    group  = Gtk3::AccelGroup.new
+    window = Gtk3::Window.new
+
+    should.raise?(TypeError) { window.add_accel_group(10) } \
+      .message.should == 'wrong argument type Fixnum (expected Gtk3::AccelGroup)'
+
+    window.add_accel_group(group)
+
+    should.raise?(TypeError) { window.remove_accel_group(10) } \
+      .message.should == 'wrong argument type Fixnum (expected Gtk3::AccelGroup)'
+
+    window.remove_accel_group(group)
+  end
 end
