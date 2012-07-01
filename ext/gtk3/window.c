@@ -158,14 +158,7 @@ static VALUE gtk3_window_set_resizable(VALUE self, VALUE resize)
 {
     GtkWindow *window;
 
-    if ( resize != Qtrue && resize != Qfalse )
-    {
-        rb_raise(
-            rb_eTypeError,
-            "expected a TrueClass or FalseClass but got %s instead",
-            gtk3_get_rbclass(resize)
-        );
-    }
+    gtk3_check_boolean(resize);
 
     Data_Get_Struct(self, GtkWindow, window);
 
@@ -294,6 +287,43 @@ static VALUE gtk3_window_activate_default(VALUE self)
 }
 
 /**
+ * Sets the window to be a modal or non modal window. When a window is set to
+ * be a modal winodw the user can not interact with other windows in the
+ * application.
+ *
+ * @since 2012-07-01
+ * @param [TrueClass|FalseClass] modal Boolean that indicates the modal state
+ *  of the window.
+ */
+static VALUE gtk3_window_set_modal(VALUE self, VALUE modal)
+{
+    GtkWindow *window;
+
+    gtk3_check_boolean(modal);
+
+    Data_Get_Struct(self, GtkWindow, window);
+
+    gtk_window_set_modal(window, gtk3_rboolean_to_gboolean(modal));
+
+    return Qnil;
+}
+
+/**
+ * Gets the modal state of the window.
+ *
+ * @since  2012-07-01
+ * @return [TrueClass|FalseClass]
+ */
+static VALUE gtk3_window_get_modal(VALUE self)
+{
+    GtkWindow *window;
+
+    Data_Get_Struct(self, GtkWindow, window);
+
+    return gtk3_gboolean_to_rboolean(gtk_window_get_modal(window));
+}
+
+/**
  * Sets up the {Gtk3::Window} class.
  *
  * @since 2012-05-29
@@ -335,6 +365,20 @@ void Init_gtk3_window()
         gtk3_cWindow,
         "activate_default",
         gtk3_window_activate_default,
+        0
+    );
+
+    rb_define_method(
+        gtk3_cWindow,
+        "modal=",
+        gtk3_window_set_modal,
+        1
+    );
+
+    rb_define_method(
+        gtk3_cWindow,
+        "modal?",
+        gtk3_window_get_modal,
         0
     );
 

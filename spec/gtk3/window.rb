@@ -52,4 +52,14 @@ describe 'Gtk3::Window' do
 
     window.activate_default.should == false
   end
+
+  it 'Set a window to be a modal window' do
+    window = Gtk3::Window.new
+
+    window.modal?.should == false
+
+    window.modal = true
+
+    window.modal?.should == true
+  end
 end

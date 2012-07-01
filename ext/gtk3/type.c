@@ -81,6 +81,25 @@ void gtk3_rbvalue_to_gvalue(VALUE rbvalue, GValue *gvalue)
 }
 
 /**
+ * Checks if a specified Ruby value is a boolean (TrueClass or FalseClass). If
+ * this isn't the case `TypeError` is raised.
+ *
+ * @since 2012-07-01
+ * @param [VALUE] val The Ruby value to check.
+ */
+void gtk3_check_boolean(VALUE val)
+{
+    if ( val != Qtrue && val != Qfalse )
+    {
+        rb_raise(
+            rb_eTypeError,
+            "expected a TrueClass or FalseClass but got %s instead",
+            gtk3_get_rbclass(val)
+        );
+    }
+}
+
+/**
  * Checks if the specified Ruby value is a Fixnum or Bignum.
  *
  * @since 2012-06-05
