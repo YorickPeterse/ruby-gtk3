@@ -260,6 +260,40 @@ static VALUE gtk3_window_remove_accel_group(VALUE self, VALUE group)
 }
 
 /**
+ * Activates the currently focused widget in the window. If a widget has been
+ * activated `true` is returned, `false` otherwise.
+ *
+ * @since  2012-07-01
+ * @return [TrueClass|FalseClass]
+ */
+static VALUE gtk3_window_activate_focus(VALUE self)
+{
+    GtkWindow *window;
+
+    Data_Get_Struct(self, GtkWindow, window);
+
+    return gtk3_gboolean_to_rboolean(gtk_window_activate_focus(window));
+}
+
+/**
+ * Activates the default widget for the current window, unless the currently
+ * focused widget has been configured to receive the default action.
+ *
+ * If a widget has been activated `true` is returned, `false` otherwise.
+ *
+ * @since  2012-07-01
+ * @return [TrueClass|FalseClass]
+ */
+static VALUE gtk3_window_activate_default(VALUE self)
+{
+    GtkWindow *window;
+
+    Data_Get_Struct(self, GtkWindow, window);
+
+    return gtk3_gboolean_to_rboolean(gtk_window_activate_default(window));
+}
+
+/**
  * Sets up the {Gtk3::Window} class.
  *
  * @since 2012-05-29
@@ -288,6 +322,20 @@ void Init_gtk3_window()
         "remove_accel_group",
         gtk3_window_remove_accel_group,
         1
+    );
+
+    rb_define_method(
+        gtk3_cWindow,
+        "activate_focus",
+        gtk3_window_activate_focus,
+        0
+    );
+
+    rb_define_method(
+        gtk3_cWindow,
+        "activate_default",
+        gtk3_window_activate_default,
+        0
     );
 
     gtk3_id_toplevel = rb_intern("toplevel");

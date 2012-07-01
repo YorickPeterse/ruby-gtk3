@@ -38,4 +38,18 @@ describe 'Gtk3::Window' do
 
     window.remove_accel_group(group)
   end
+
+  # TODO: find a proper way to test this.
+  it 'Activate a focused widget' do
+    window = Gtk3::Window.new
+
+    window.activate_focus.should == false
+  end
+
+  # TODO: find a proper way to test this.
+  it 'Activate the default widget of a window' do
+    window = Gtk3::Window.new
+
+    window.activate_default.should == false
+  end
 end
