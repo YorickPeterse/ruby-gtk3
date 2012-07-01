@@ -62,4 +62,16 @@ describe 'Gtk3::Window' do
 
     window.modal?.should == true
   end
+
+  it 'Set and get the default size of a window' do
+    window = Gtk3::Window.new
+
+    should.raise?(TypeError) { window.default_size = 10 }
+    should.raise?(ArgumentError) { window.default_size = [1, 2, 3] }
+    should.raise?(TypeError) { window.default_size = ['a', 'b'] }
+
+    window.default_size = [100, 200]
+
+    window.default_size.should == [100, 200]
+  end
 end

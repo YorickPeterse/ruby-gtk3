@@ -5,6 +5,7 @@
 
 extern ID gtk3_id_before;
 extern ID gtk3_id_after;
+extern ID gtk3_id_length;
 
 extern VALUE gtk3_cWidget;
 

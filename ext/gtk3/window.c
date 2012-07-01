@@ -15,6 +15,13 @@ ID gtk3_id_toplevel;
 ID gtk3_id_popup;
 
 /**
+ * ID for the symbol `:length`
+ *
+ * @since 2012-07-01
+ */
+ID gtk3_id_length;
+
+/**
  * Document-class: Gtk3::Window
  *
  * {Gtk3::Window} is a toplevel window class which can contain other widgets
@@ -324,6 +331,84 @@ static VALUE gtk3_window_get_modal(VALUE self)
 }
 
 /**
+ * Sets the default size of the window. When setting the default size the user
+ * is still able to resize the window.
+ *
+ * In order to set the size you must supply an array with two values. The first
+ * value is used for the width, the second value for the height.
+ *
+ * @example
+ *  window = Gtk3::Window.new
+ *
+ *  window.default_size = [100, 200] # sets the size to 100x200 pixels.
+ *
+ * @since 2012-07-01
+ * @param [Array] dimensions Array containing the window dimensions.
+ */
+static VALUE gtk3_window_set_default_size(VALUE self, VALUE dimensions)
+{
+    GtkWindow *window;
+    int array_length;
+    VALUE width;
+    VALUE height;
+
+    Check_Type(dimensions, T_ARRAY);
+
+    array_length = NUM2INT(rb_funcall(dimensions, gtk3_id_length, 0));
+
+    if ( array_length != 2 )
+    {
+        rb_raise(
+            rb_eArgError,
+            "expected an Array with 2 elements but got %i elements instead",
+            array_length
+        );
+    }
+
+    width  = rb_ary_entry(dimensions, 0);
+    height = rb_ary_entry(dimensions, 1);
+
+    gtk3_check_number(width);
+    gtk3_check_number(height);
+
+    Data_Get_Struct(self, GtkWindow, window);
+
+    gtk_window_set_default_size(window, NUM2INT(width), NUM2INT(height));
+
+    return Qnil;
+}
+
+/**
+ * Returns an array containing the default window dimensions. The first value
+ * is the width, the second value the height.
+ *
+ * @example
+ *  window = Gtk3::Window.new
+ *
+ *  window.default_size = [100, 200]
+ *
+ *  window.default_size # => [100, 200]
+ *
+ * @since  2012-07-01
+ * @return [Array]
+ */
+static VALUE gtk3_window_get_default_size(VALUE self)
+{
+    GtkWindow *window;
+    gint width;
+    gint height;
+    VALUE dimensions;
+
+    Data_Get_Struct(self, GtkWindow, window);
+
+    gtk_window_get_default_size(window, &width, &height);
+
+    dimensions = rb_ary_new3(2, INT2NUM(width), INT2NUM(height));
+
+    return dimensions;
+}
+
+/**
  * Sets up the {Gtk3::Window} class.
  *
  * @since 2012-05-29
@@ -382,6 +467,21 @@ void Init_gtk3_window()
         0
     );
 
+    rb_define_method(
+        gtk3_cWindow,
+        "default_size=",
+        gtk3_window_set_default_size,
+        1
+    );
+
+    rb_define_method(
+        gtk3_cWindow,
+        "default_size",
+        gtk3_window_get_default_size,
+        0
+    );
+
     gtk3_id_toplevel = rb_intern("toplevel");
     gtk3_id_popup    = rb_intern("popup");
+    gtk3_id_length   = rb_intern("length");
 }
