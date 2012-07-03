@@ -4,3 +4,4 @@
 ext/gtk3/Makefile
 tmp/
 doc
+Gemfile.lock
