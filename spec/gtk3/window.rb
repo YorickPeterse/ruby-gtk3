@@ -74,4 +74,14 @@ describe 'Gtk3::Window' do
 
     window.default_size.should == [100, 200]
   end
+
+  it 'Destroy the parent of a window and the window itself' do
+    window = Gtk3::Window.new
+
+    window.destroy_with_parent?.should == false
+
+    window.destroy_with_parent = true
+
+    window.destroy_with_parent?.should == true
+  end
 end

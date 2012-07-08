@@ -409,6 +409,48 @@ static VALUE gtk3_window_get_default_size(VALUE self)
 }
 
 /**
+ * Sets whether the window will be destroyed when its transient parent is
+ * destroyed.
+ *
+ * @since 2012-07-08
+ * @param [TrueClass|FalseClass] destroy Whether or not the window should be
+ *  destroyed.
+ */
+static VALUE gtk3_window_set_destroy_with_parent(VALUE self, VALUE destroy)
+{
+    GtkWindow *window;
+
+    gtk3_check_boolean(destroy);
+
+    Data_Get_Struct(self, GtkWindow, window);
+
+    gtk_window_set_destroy_with_parent(
+        window,
+        gtk3_rboolean_to_gboolean(destroy)
+    );
+
+    return Qnil;
+}
+
+/**
+ * Returns whether the window will be destroyed when its transient parent is
+ * destroyed.
+ *
+ * @since  2012-07-08
+ * @return [TrueClass|FalseClass]
+ */
+static VALUE gtk3_window_get_destroy_with_parent(VALUE self)
+{
+    GtkWindow *window;
+
+    Data_Get_Struct(self, GtkWindow, window);
+
+    return gtk3_gboolean_to_rboolean(
+        gtk_window_get_destroy_with_parent(window)
+    );
+}
+
+/**
  * Sets up the {Gtk3::Window} class.
  *
  * @since 2012-05-29
@@ -478,6 +520,20 @@ void Init_gtk3_window()
         gtk3_cWindow,
         "default_size",
         gtk3_window_get_default_size,
+        0
+    );
+
+    rb_define_method(
+        gtk3_cWindow,
+        "destroy_with_parent=",
+        gtk3_window_set_destroy_with_parent,
+        1
+    );
+
+    rb_define_method(
+        gtk3_cWindow,
+        "destroy_with_parent?",
+        gtk3_window_get_destroy_with_parent,
         0
     );
 
