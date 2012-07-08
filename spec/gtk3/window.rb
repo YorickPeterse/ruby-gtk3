@@ -9,6 +9,8 @@ describe 'Gtk3::Window' do
     window.title = 'My Window'
 
     window.title.should == 'My Window'
+
+    window.destroy
   end
 
   it 'Sets whether the window can be resized by the user' do
@@ -21,6 +23,8 @@ describe 'Gtk3::Window' do
     window.resizable = false
 
     window.resizable?.should == false
+
+    window.destroy
   end
 
   # TODO: find a proper way to test if this actually works.
@@ -37,6 +41,8 @@ describe 'Gtk3::Window' do
       .message.should == 'wrong argument type Fixnum (expected Gtk3::AccelGroup)'
 
     window.remove_accel_group(group)
+
+    window.destroy
   end
 
   # TODO: find a proper way to test this.
@@ -44,6 +50,8 @@ describe 'Gtk3::Window' do
     window = Gtk3::Window.new
 
     window.activate_focus.should == false
+
+    window.destroy
   end
 
   # TODO: find a proper way to test this.
@@ -51,6 +59,8 @@ describe 'Gtk3::Window' do
     window = Gtk3::Window.new
 
     window.activate_default.should == false
+
+    window.destroy
   end
 
   it 'Set a window to be a modal window' do
@@ -61,6 +71,8 @@ describe 'Gtk3::Window' do
     window.modal = true
 
     window.modal?.should == true
+
+    window.destroy
   end
 
   it 'Set and get the default size of a window' do
@@ -73,6 +85,8 @@ describe 'Gtk3::Window' do
     window.default_size = [100, 200]
 
     window.default_size.should == [100, 200]
+
+    window.destroy
   end
 
   it 'Destroy the parent of a window and the window itself' do
@@ -83,5 +97,7 @@ describe 'Gtk3::Window' do
     window.destroy_with_parent = true
 
     window.destroy_with_parent?.should == true
+
+    window.destroy
   end
 end
