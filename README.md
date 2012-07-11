@@ -2,6 +2,11 @@
 
 A C extension that provides a Ruby binding to the GTK3 API.
 
+**Note:** this project is currently put on hold due to the lack of available
+time and the sheer size of the GTK project and all its dependencies. Maybe in
+the future I'll resume work on this project but for now I'm sadly not able to
+commit myself to it.
+
 ## Example
 
 A simple "Hello world" example:
